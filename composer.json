@@ -1,0 +1,21 @@
+{
+	"name": "baraja-core/webcrawler",
+	"description": "Simple package to load list of urls and make sitemap.",
+	"homepage": "https://github.com/baraja-core/webcrawler",
+	"authors": [
+		{
+			"name": "Jan Barášek",
+			"homepage": "http://baraja.cz"
+		}
+	],
+	"require": {
+		"php": ">=7.1.0",
+		"nette/utils": "^3.0"
+	},
+	"autoload": {
+		"classmap": [
+			"src/"
+		]
+	},
+	"minimum-stability": "stable"
+}
