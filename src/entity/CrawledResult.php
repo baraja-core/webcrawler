@@ -8,13 +8,12 @@ namespace Baraja\WebCrawler\Entity;
 use Nette\SmartObject;
 
 /**
- * @property-read array $allUrls
- * @property-read array $followedUrls
- * @property-read array $openedUrls
- * @property-read array $urlReferences
- * @property-read array $urls
- * @property-read array $errors
- * @package Baraja\WebCrawler\Entity
+ * @property-read string[] $allUrls
+ * @property-read string[] $followedUrls
+ * @property-read string[] $openedUrls
+ * @property-read string[] $urlReferences
+ * @property-read Url[] $urls
+ * @property-read string[] $errors
  */
 class CrawledResult
 {
@@ -94,7 +93,7 @@ class CrawledResult
 	}
 
 	/**
-	 * @return string[]
+	 * @return Url[]
 	 */
 	public function getUrls(): array
 	{

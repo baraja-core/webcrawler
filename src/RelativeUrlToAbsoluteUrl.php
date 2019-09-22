@@ -5,10 +5,13 @@ declare(strict_types=1);
 namespace Baraja\WebCrawler;
 
 
+use Nette\StaticClass;
 use Nette\Utils\Strings;
 
 class RelativeUrlToAbsoluteUrl
 {
+
+	use StaticClass;
 
 	/**
 	 * @param string $baseUrl

@@ -11,10 +11,10 @@ use Nette\SmartObject;
  * @property-read \Nette\Http\Url $url
  * @property-read string $html
  * @property-read string $title
- * @property-read array $texts
- * @property-read array $uniqueTexts
- * @property-read array $links
- * @property-read array $headers
+ * @property-read string[] $texts
+ * @property-read string[] $uniqueTexts
+ * @property-read string[] $links
+ * @property-read string[] $headers
  * @property-read float $loadingTime
  * @property-read int $httpCode
  */

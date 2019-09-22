@@ -14,8 +14,6 @@ use Nette\Utils\Strings;
 class Crawler
 {
 
-	private const LINK_PARAM = '/href=[\'"](?<url>[^\'"]+)[\'"]/';
-
 	/**
 	 * @var Config
 	 */
@@ -162,15 +160,13 @@ class Crawler
 			$this->allUrls[] = $url;
 		}
 
-		$url = preg_replace('/^(.*?)[\#].*$/', '$1', $url);
+		$url = (string) preg_replace('/^(.*?)[\#].*$/', '$1', $url);
 
-		// Is external?
-		if ($this->config->isFollowExternalLinks() === false && $this->isExternalLink($url)) {
+		if ($this->config->isFollowExternalLinks() === false && $this->isExternalLink($url)) { // Is external?
 			$canAdd = false;
 		}
 
-		// Is allowed?
-		if ($canAdd) {
+		if ($canAdd) { // Is allowed?
 			$isAllowed = false;
 			foreach ($this->config->getAllowedUrls() as $allow) {
 				if (preg_match('/^' . $allow . '$/', $url)) {
@@ -183,8 +179,7 @@ class Crawler
 			}
 		}
 
-		// Is forbidden?
-		if ($canAdd) {
+		if ($canAdd) { // Is forbidden?
 			$isForbidden = false;
 			foreach ($this->config->getForbiddenUrls() as $forbidden) {
 				if (preg_match('/^' . $forbidden . '$/', $url)) {
@@ -197,8 +192,7 @@ class Crawler
 			}
 		}
 
-		// Is in list?
-		if ($canAdd && in_array($url, $this->urlList, true)) {
+		if ($canAdd && \in_array($url, $this->urlList, true)) { // Is in list?
 			$canAdd = false;
 		}
 
@@ -249,7 +243,7 @@ class Crawler
 			$titleParser['title'] ?? $url,
 			$this->formatHeaders($header),
 			self::timer($url) * 1000,
-			$httpCodeParser['httpCode'] ?? 500
+			(int) ($httpCodeParser['httpCode'] ?? 500)
 		);
 	}
 
@@ -260,11 +254,10 @@ class Crawler
 	private function formatHtml(string $html): string
 	{
 		$html = Strings::normalize($html);
-		$html = preg_replace('/\n+/', "\n", $html);
 		$html = str_replace(
 			['&nbsp;', '&ndash;'],
 			[' ', '-'],
-			(string) $html
+			(string) preg_replace('/\n+/', "\n", $html)
 		);
 
 		return $html;
@@ -298,7 +291,9 @@ class Crawler
 
 		if (preg_match_all('/<a[^>]+>/', $html, $aLinks)) {
 			foreach ($aLinks[0] as $aLink) {
-				if (preg_match(self::LINK_PARAM, $aLink, $link) && preg_match('/^mailto:/', $link['url'])) {
+				if (preg_match('/href=[\'"](?<url>[^\'"]+)[\'"]/', $aLink, $link)
+					&& !preg_match('/^(?:mailto|tel|phone)\:/', $link['url'])
+				) {
 					$formattedLink = RelativeUrlToAbsoluteUrl::process($url, $link['url']);
 					if ($formattedLink !== null && !in_array($formattedLink, $links, true)) {
 						$links[] = $formattedLink;

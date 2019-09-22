@@ -8,8 +8,8 @@ namespace Baraja\WebCrawler\Entity;
 use Nette\SmartObject;
 
 /**
- * @property-read array $regularTexts
- * @property-read array $uniqueTexts
+ * @property-read string[] $regularTexts
+ * @property-read string[] $uniqueTexts
  */
 class TextSeparatorEntity
 {

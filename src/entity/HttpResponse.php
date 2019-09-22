@@ -10,7 +10,7 @@ use Nette\SmartObject;
 /**
  * @property-read string $html
  * @property-read string $title
- * @property-read array $headers
+ * @property-read string[] $headers
  * @property-read float $loadingTime
  * @property-read int $httpCode
  */

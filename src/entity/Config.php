@@ -12,8 +12,8 @@ use Nette\SmartObject;
  * @property-read int $sleepBetweenRequests
  * @property-read int $maxHttpRequests
  * @property-read int $maxCrawlTimeInSeconds
- * @property-read array $allowedUrls
- * @property-read array $forbiddenUrls
+ * @property-read string[] $allowedUrls
+ * @property-read string[] $forbiddenUrls
  */
 class Config
 {
