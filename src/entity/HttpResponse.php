@@ -13,6 +13,7 @@ use Nette\SmartObject;
  * @property-read string[] $headers
  * @property-read float $loadingTime
  * @property-read int $httpCode
+ * @property-read int $size
  */
 class HttpResponse
 {
@@ -44,13 +45,19 @@ class HttpResponse
 	 */
 	private $httpCode;
 
-	public function __construct(string $html, string $title, array $headers, float $loadingTime, int $httpCode)
+	/**
+	 * @var int
+	 */
+	private $size;
+
+	public function __construct(string $html, string $title, array $headers, float $loadingTime, int $httpCode, int $size)
 	{
 		$this->html = $html;
 		$this->title = $title;
 		$this->headers = $headers;
 		$this->loadingTime = $loadingTime;
 		$this->httpCode = $httpCode;
+		$this->size = $size;
 	}
 
 	/**
@@ -91,6 +98,14 @@ class HttpResponse
 	public function getHttpCode(): int
 	{
 		return $this->httpCode;
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getSize(): int
+	{
+		return $this->size;
 	}
 
 }

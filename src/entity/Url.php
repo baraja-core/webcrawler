@@ -10,6 +10,7 @@ use Nette\SmartObject;
 /**
  * @property-read \Nette\Http\Url $url
  * @property-read string $html
+ * @property-read int $size
  * @property-read string $title
  * @property-read string[] $texts
  * @property-read string[] $uniqueTexts
@@ -32,6 +33,11 @@ class Url
 	 * @var string
 	 */
 	private $html;
+
+	/**
+	 * @var int
+	 */
+	private $size;
 
 	/**
 	 * @var string
@@ -68,10 +74,11 @@ class Url
 	 */
 	private $httpCode;
 
-	public function __construct(string $url, string $html, string $title, array $texts, array $uniqueTexts, array $headers, array $links, float $loadingTime, int $httpCode)
+	public function __construct(string $url, string $html, int $size, string $title, array $texts, array $uniqueTexts, array $headers, array $links, float $loadingTime, int $httpCode)
 	{
 		$this->url = new \Nette\Http\Url($url);
 		$this->html = $html;
+		$this->size = $size;
 		$this->title = $title;
 		$this->texts = $texts;
 		$this->uniqueTexts = $uniqueTexts;
@@ -95,6 +102,14 @@ class Url
 	public function getHtml(): string
 	{
 		return $this->html;
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getSize(): int
+	{
+		return $this->size;
 	}
 
 	/**
