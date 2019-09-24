@@ -14,6 +14,7 @@ use Nette\SmartObject;
  * @property-read string[] $urlReferences
  * @property-read Url[] $urls
  * @property-read string[] $errors
+ * @property-read string|null $robots
  */
 class CrawledResult
 {
@@ -50,7 +51,14 @@ class CrawledResult
 	 */
 	private $errors;
 
-	public function __construct(array $allUrls, array $followedUrls, array $openedUrls, array $urlReferences, array $urls, array $errors)
+	/**
+	 * Content of robots.txt file if exist.
+	 *
+	 * @var string|null
+	 */
+	private $robots;
+
+	public function __construct(array $allUrls, array $followedUrls, array $openedUrls, array $urlReferences, array $urls, array $errors, ?string $robots)
 	{
 		$this->allUrls = $allUrls;
 		$this->followedUrls = $followedUrls;
@@ -58,6 +66,7 @@ class CrawledResult
 		$this->urlReferences = $urlReferences;
 		$this->urls = $urls;
 		$this->errors = $errors;
+		$this->robots = $robots;
 	}
 
 	/**
@@ -106,6 +115,14 @@ class CrawledResult
 	public function getErrors(): array
 	{
 		return $this->errors;
+	}
+
+	/**
+	 * @return string|null
+	 */
+	public function getRobots(): ?string
+	{
+		return $this->robots;
 	}
 
 }
