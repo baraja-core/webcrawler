@@ -10,6 +10,7 @@ use Baraja\WebCrawler\Entity\CrawledResult;
 use Baraja\WebCrawler\Entity\HttpResponse;
 use Baraja\WebCrawler\Entity\Url;
 use Nette\Utils\Strings;
+use Tracy\Debugger;
 
 class Crawler
 {
@@ -102,7 +103,7 @@ class Crawler
 
 			try {
 				$httpResponse = $this->loadUrl($crawledUrl);
-				$links = $this->getLinksFromHTML($url, $httpResponse->html);
+				$links = $this->getLinksFromHTML($crawledUrl, $httpResponse->html);
 
 				foreach ($links as $link) {
 					$this->addUrl($link);
@@ -113,16 +114,21 @@ class Crawler
 
 				$urls[] = new Url(
 					$crawledUrl,
-					$httpResponse->html,
-					Strings::trim($httpResponse->title),
-					$texts->regularTexts,
-					$texts->uniqueTexts,
-					$httpResponse->headers,
+					$httpResponse->getHtml(),
+					$httpResponse->getSize(),
+					Strings::trim($httpResponse->getTitle()),
+					$texts->getRegularTexts(),
+					$texts->getUniqueTexts(),
+					$httpResponse->getHeaders(),
 					$links,
-					$httpResponse->loadingTime,
-					(int) $httpResponse->httpCode
+					$httpResponse->getLoadingTime(),
+					$httpResponse->getHttpCode()
 				);
 			} catch (\Throwable $e) {
+				if (class_exists(Debugger::class) === true) {
+					Debugger::log($e);
+				}
+
 				$this->errors[] = [
 					'url' => $crawledUrl,
 					'message' => $e->getMessage(),
@@ -207,7 +213,7 @@ class Crawler
 	 */
 	private function isExternalLink(string $url): bool
 	{
-		return (new \Nette\Http\Url($url))->host !== $this->inputUrl->host;
+		return (new \Nette\Http\Url($url))->getDomain(5) !== $this->inputUrl->getDomain(5);
 	}
 
 	/**
@@ -230,9 +236,26 @@ class Crawler
 
 		$response = curl_exec($ch);
 
-		$header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
-		$header = substr($response, 0, $header_size);
-		$html = Strings::normalize(substr($response, $header_size));
+		$headerSize = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+		$header = substr($response, 0, $headerSize);
+		$contentType = '';
+
+		if (preg_match('/Content-Type:\s+(\S+)/', $response, $contentTypeParser)) {
+			$contentType = $contentTypeParser[1];
+		}
+
+		if (strncmp($contentType, 'text/', 5) === 0) {
+			$html = Strings::normalize((string) substr($response, $headerSize));
+			$size = strlen($html);
+		} else {
+			$html = '<!-- FILE ' . $url . ' -->';
+			if (preg_match('/Content-Length:\s+(\d+)/', $response, $contentLength)) {
+				$size = (int) $contentLength[1];
+			} else {
+				$size = strlen($response) - $headerSize;
+			}
+		}
+
 		$this->followedUrls[] = $url;
 
 		preg_match('/^.+?\s+(?<httpCode>\d+)/', $response, $httpCodeParser);
@@ -243,7 +266,8 @@ class Crawler
 			$titleParser['title'] ?? $url,
 			$this->formatHeaders($header),
 			self::timer($url) * 1000,
-			(int) ($httpCodeParser['httpCode'] ?? 500)
+			(int) ($httpCodeParser['httpCode'] ?? 500),
+			$size < 0 ? 0 : $size
 		);
 	}
 
