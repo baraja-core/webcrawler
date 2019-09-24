@@ -10,6 +10,7 @@ use Baraja\WebCrawler\Entity\CrawledResult;
 use Baraja\WebCrawler\Entity\HttpResponse;
 use Baraja\WebCrawler\Entity\Url;
 use Nette\Utils\Strings;
+use Nette\Utils\Validators;
 use Tracy\Debugger;
 
 class Crawler
@@ -90,6 +91,9 @@ class Crawler
 
 		$this->inputUrl = new \Nette\Http\Url($url);
 		$this->addUrl($url);
+		$robots = $this->processRobots(
+			$this->inputUrl->getScheme() . '://' . $this->inputUrl->getAuthority() . '/robots.txt'
+		);
 		$crawlerStartTime = \time();
 
 		for ($iterator = 0; isset($this->urlList[$iterator]); $iterator++) {
@@ -103,14 +107,14 @@ class Crawler
 
 			try {
 				$httpResponse = $this->loadUrl($crawledUrl);
-				$links = $this->getLinksFromHTML($crawledUrl, $httpResponse->html);
+				$links = $this->getLinksFromHTML($crawledUrl, $httpResponse->getHtml());
 
 				foreach ($links as $link) {
 					$this->addUrl($link);
 					$this->addUrlReference($crawledUrl, $link);
 				}
 
-				$texts = $this->textSeparator->getTexts($httpResponse->html);
+				$texts = $this->textSeparator->getTexts($httpResponse->getHtml());
 
 				$urls[] = new Url(
 					$crawledUrl,
@@ -143,7 +147,8 @@ class Crawler
 			$this->followedUrls,
 			$this->urlReferences,
 			$urls,
-			$this->errors
+			$this->errors,
+			$robots
 		);
 	}
 
@@ -244,9 +249,17 @@ class Crawler
 			$contentType = $contentTypeParser[1];
 		}
 
-		if (strncmp($contentType, 'text/', 5) === 0) {
+		if ($contentType === 'application/xml' || strncmp($contentType, 'text/', 5) === 0) {
 			$html = Strings::normalize((string) substr($response, $headerSize));
 			$size = strlen($html);
+
+			if (strpos($html, '<?xml') !== false && preg_match_all('/<loc>(https?\:\/\/[^\s\<]+)\<\/loc>/', $html, $sitemapUrls)) {
+				foreach ($sitemapUrls[1] ?? [] as $sitemapUrl) {
+					if (Validators::isUrl($sitemapUrl)) {
+						$this->addUrl($sitemapUrl);
+					}
+				}
+			}
 		} else {
 			$html = '<!-- FILE ' . $url . ' -->';
 			if (preg_match('/Content-Length:\s+(\d+)/', $response, $contentLength)) {
@@ -351,6 +364,29 @@ class Crawler
 		} else {
 			$this->urlReferences[$source][] = $target;
 		}
+	}
+
+	/**
+	 * @param string $url
+	 * @return string|null
+	 */
+	private function processRobots(string $url): ?string
+	{
+		$return = null;
+		$response = $this->loadUrl($url);
+
+		if ($response->getHttpCode() === 200) {
+			$this->addUrl($url);
+			foreach (explode("\n", $return = Strings::normalize($response->getHtml())) as $line) {
+				$line = trim($line);
+
+				if (preg_match('/^[Ss]itemap:\s+(https?\:\/\/\S+)/', $line, $robots)) {
+					$this->addUrl($robots[1]);
+				}
+			}
+		}
+
+		return $return;
 	}
 
 }
