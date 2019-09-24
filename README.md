@@ -3,6 +3,8 @@ Web crawler
 
 Simply library for crawling websites by following links with minimal dependencies.
 
+[Czech documentation](https://php.baraja.cz/stazeni-celeho-webu-po-odkazech)
+
 Install
 -------
 
