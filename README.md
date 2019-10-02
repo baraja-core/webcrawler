@@ -31,6 +31,28 @@ $result = $crawler->crawl('https://example.com');
 
 In `$result` variable will be entity of type `CrawledResult`.
 
+Advanced checking of multiple URLs
+----------------------------------
+
+In real case you need download multiple URLs in single domain and check if some specific URLs works.
+
+Simple example:
+
+```php
+$crawler = \Baraja\WebCrawler\Crawler;
+
+$result = $crawler->crawlList(
+    'https://example.com', // Starting (main) URL
+    [ // Additional URLs
+        'https://example.com/error-404',
+        '/robots.txt', // Relative links are also allowed
+        '/web.config',
+    ]
+);
+```
+
+Notice: File **robots.txt** and sitemap will be downloaded automatically if exist.
+
 Settings
 --------
 
