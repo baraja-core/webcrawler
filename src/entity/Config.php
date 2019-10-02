@@ -5,20 +5,8 @@ declare(strict_types=1);
 namespace Baraja\WebCrawler\Entity;
 
 
-use Nette\SmartObject;
-
-/**
- * @property-read bool $followExternalLinks
- * @property-read int $sleepBetweenRequests
- * @property-read int $maxHttpRequests
- * @property-read int $maxCrawlTimeInSeconds
- * @property-read string[] $allowedUrls
- * @property-read string[] $forbiddenUrls
- */
 class Config
 {
-
-	use SmartObject;
 
 	/**
 	 * @var bool

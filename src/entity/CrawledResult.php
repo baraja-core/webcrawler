@@ -5,21 +5,8 @@ declare(strict_types=1);
 namespace Baraja\WebCrawler\Entity;
 
 
-use Nette\SmartObject;
-
-/**
- * @property-read string[] $allUrls
- * @property-read string[] $followedUrls
- * @property-read string[] $openedUrls
- * @property-read string[] $urlReferences
- * @property-read Url[] $urls
- * @property-read string[] $errors
- * @property-read string|null $robots
- */
 class CrawledResult
 {
-
-	use SmartObject;
 
 	/**
 	 * @var string[]

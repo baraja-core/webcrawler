@@ -5,27 +5,11 @@ declare(strict_types=1);
 namespace Baraja\WebCrawler\Entity;
 
 
-use Nette\SmartObject;
-
-/**
- * @property-read \Nette\Http\Url $url
- * @property-read string $html
- * @property-read int $size
- * @property-read string $title
- * @property-read string[] $texts
- * @property-read string[] $uniqueTexts
- * @property-read string[] $links
- * @property-read string[] $headers
- * @property-read float $loadingTime
- * @property-read int $httpCode
- */
 class Url
 {
 
-	use SmartObject;
-
 	/**
-	 * @var \Nette\Http\Url
+	 * @var UrlHelper
 	 */
 	private $url;
 
@@ -76,7 +60,7 @@ class Url
 
 	public function __construct(string $url, string $html, int $size, string $title, array $texts, array $uniqueTexts, array $headers, array $links, float $loadingTime, int $httpCode)
 	{
-		$this->url = new \Nette\Http\Url($url);
+		$this->url = new UrlHelper($url);
 		$this->html = $html;
 		$this->size = $size;
 		$this->title = $title;
@@ -89,9 +73,9 @@ class Url
 	}
 
 	/**
-	 * @return \Nette\Http\Url
+	 * @return UrlHelper
 	 */
-	public function getUrl(): \Nette\Http\Url
+	public function getUrl(): UrlHelper
 	{
 		return $this->url;
 	}

@@ -5,20 +5,8 @@ declare(strict_types=1);
 namespace Baraja\WebCrawler\Entity;
 
 
-use Nette\SmartObject;
-
-/**
- * @property-read string $html
- * @property-read string $title
- * @property-read string[] $headers
- * @property-read float $loadingTime
- * @property-read int $httpCode
- * @property-read int $size
- */
 class HttpResponse
 {
-
-	use SmartObject;
 
 	/**
 	 * @var string

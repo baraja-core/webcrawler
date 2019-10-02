@@ -5,16 +5,8 @@ declare(strict_types=1);
 namespace Baraja\WebCrawler\Entity;
 
 
-use Nette\SmartObject;
-
-/**
- * @property-read string[] $regularTexts
- * @property-read string[] $uniqueTexts
- */
 class TextSeparatorEntity
 {
-
-	use SmartObject;
 
 	/**
 	 * @var string[]

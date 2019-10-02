@@ -5,13 +5,8 @@ declare(strict_types=1);
 namespace Baraja\WebCrawler;
 
 
-use Nette\StaticClass;
-use Nette\Utils\Strings;
-
 class RelativeUrlToAbsoluteUrl
 {
-
-	use StaticClass;
 
 	/**
 	 * @param string $baseUrl
@@ -97,32 +92,32 @@ class RelativeUrlToAbsoluteUrl
 	 */
 	private static function splitUrl(string $url, bool $decode = true): ?array
 	{
-		$xunressub = 'a-zA-Z\d\-._~\!$&\'()*+,;=';
-		$xpchar = $xunressub . ':@%';
-		$xscheme = '([a-zA-Z][a-zA-Z\d+-.]*)';
-		$xuserinfo = '(([' . $xunressub . '%]*)(:([' . $xunressub . ':%]*))?)';
-		$xipv4 = '(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})';
-		$xipv6 = '(\[([a-fA-F\d.:]+)\])';
-		$xhost_name = '([a-zA-Z\d-.%]+)';
-		$xhost = '(' . $xhost_name . '|' . $xipv4 . '|' . $xipv6 . ')';
-		$xport = '(\d*)';
-		$xauthority = '((' . $xuserinfo . '@)?' . $xhost . '?(:' . $xport . ')?)';
-		$xslash_seg = '(/[' . $xpchar . ']*)';
-		$xpath_authabs = '((//' . $xauthority . ')((/[' . $xpchar . ']*)*))';
-		$xpath_rel = '([' . $xpchar . ']+' . $xslash_seg . '*)';
-		$xpath_abs = '(/(' . $xpath_rel . ')?)';
-		$xapath = '(' . $xpath_authabs . '|' . $xpath_abs . '|' . $xpath_rel . ')';
-		$xqueryfrag = '([' . $xpchar . '/?' . ']*)';
-		$xurl = '^(' . $xscheme . ':)?' . $xapath . '?(\?' . $xqueryfrag . ')?(#' . $xqueryfrag . ')?$';
+		$xUnResSub = 'a-zA-Z\d\-._~\!$&\'()*+,;=';
+		$xpChar = $xUnResSub . ':@%';
+		$xScheme = '([a-zA-Z][a-zA-Z\d+-.]*)';
+		$xUserInfo = '(([' . $xUnResSub . '%]*)(:([' . $xUnResSub . ':%]*))?)';
+		$xIpv4 = '(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})';
+		$xIpv6 = '(\[([a-fA-F\d.:]+)\])';
+		$xHostName = '([a-zA-Z\d-.%]+)';
+		$xHost = '(' . $xHostName . '|' . $xIpv4 . '|' . $xIpv6 . ')';
+		$xPort = '(\d*)';
+		$xAuthority = '((' . $xUserInfo . '@)?' . $xHost . '?(:' . $xPort . ')?)';
+		$xSlashSeg = '(/[' . $xpChar . ']*)';
+		$xPathAuthAbs = '((//' . $xAuthority . ')((/[' . $xpChar . ']*)*))';
+		$xPathRel = '([' . $xpChar . ']+' . $xSlashSeg . '*)';
+		$xPathAbs = '(/(' . $xPathRel . ')?)';
+		$xaPath = '(' . $xPathAuthAbs . '|' . $xPathAbs . '|' . $xPathRel . ')';
+		$xQueryFrag = '([' . $xpChar . '/?' . ']*)';
+		$xUrl = '^(' . $xScheme . ':)?' . $xaPath . '?(\?' . $xQueryFrag . ')?(#' . $xQueryFrag . ')?$';
 
-		if (!preg_match('!' . $xurl . '!', $url, $m)) {
+		if (!preg_match('!' . $xUrl . '!', $url, $m)) {
 			return null;
 		}
 
 		$parts = [];
 
 		if (!empty($m[2])) {
-			$parts['scheme'] = Strings::lower($m[2]);
+			$parts['scheme'] = mb_strtolower($m[2], 'UTF-8');
 		}
 
 		if (!empty($m[7])) {

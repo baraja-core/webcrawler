@@ -9,8 +9,7 @@ use Baraja\WebCrawler\Entity\Config;
 use Baraja\WebCrawler\Entity\CrawledResult;
 use Baraja\WebCrawler\Entity\HttpResponse;
 use Baraja\WebCrawler\Entity\Url;
-use Nette\Utils\Strings;
-use Nette\Utils\Validators;
+use Baraja\WebCrawler\Entity\UrlHelper;
 use Tracy\Debugger;
 
 class Crawler
@@ -27,7 +26,7 @@ class Crawler
 	private $textSeparator;
 
 	/**
-	 * @var \Nette\Http\Url
+	 * @var UrlHelper
 	 */
 	private $startingUrl;
 
@@ -84,8 +83,7 @@ class Crawler
 	{
 		$urls = [];
 
-		$this->startingUrl = new \Nette\Http\Url($url);
-		$this->addUrl($url);
+		$this->processBasicConfig($url);
 		$robots = $this->processRobots(
 			$this->startingUrl->getScheme() . '://' . $this->startingUrl->getAuthority() . '/robots.txt'
 		);
@@ -115,7 +113,7 @@ class Crawler
 					$crawledUrl,
 					$httpResponse->getHtml(),
 					$httpResponse->getSize(),
-					Strings::trim($httpResponse->getTitle()),
+					trim($httpResponse->getTitle()),
 					$texts->getRegularTexts(),
 					$texts->getUniqueTexts(),
 					$httpResponse->getHeaders(),
@@ -149,16 +147,32 @@ class Crawler
 	}
 
 	/**
+	 * Load more urls on start.
+	 *
 	 * @param string $startingUrl
-	 * @param array $urls
+	 * @param string[] $urls accept array of absolute or relative urls.
 	 * @return CrawledResult
 	 */
-	public function crawlList(string $startingUrl, array $urls): CrawledResult
+	public function crawlList(string $startingUrl, array $urls = []): CrawledResult
 	{
-		foreach ($urls as $url) {
-			if (Validators::isUrl($url) === true) {
-				$this->addUrl($url);
+		$basePath = function () use ($startingUrl): string {
+			static $cache;
+
+			if ($cache === null) {
+				$url = new UrlHelper($startingUrl);
+				$cache = trim($url->getScheme() . '://' . $url->getAuthority(), '/');
 			}
+
+			return $cache;
+		};
+
+		$this->processBasicConfig($startingUrl);
+
+		foreach ($urls as $url) {
+			$this->addUrl(Helpers::isUrl($url = ltrim($url, '/')) === true // Is absolute URL?
+				? $url
+				: $basePath() . '/' . $url
+			);
 		}
 
 		return $this->crawl($startingUrl);
@@ -170,6 +184,15 @@ class Crawler
 	public function setTextSeparator(ITextSeparator $textSeparator): void
 	{
 		$this->textSeparator = $textSeparator;
+	}
+
+	/**
+	 * @param string $url
+	 */
+	private function processBasicConfig(string $url): void
+	{
+		$this->startingUrl = new UrlHelper($url);
+		$this->addUrl($url);
 	}
 
 	/**
@@ -230,7 +253,7 @@ class Crawler
 	 */
 	private function isExternalLink(string $url): bool
 	{
-		return (new \Nette\Http\Url($url))->getDomain(5) !== $this->startingUrl->getDomain(5);
+		return (new UrlHelper($url))->getDomain(5) !== $this->startingUrl->getDomain(5);
 	}
 
 	/**
@@ -262,12 +285,12 @@ class Crawler
 		}
 
 		if ($contentType === 'application/xml' || strncmp($contentType, 'text/', 5) === 0) {
-			$html = Strings::normalize((string) substr($response, $headerSize));
+			$html = Helpers::normalize((string) substr($response, $headerSize));
 			$size = strlen($html);
 
 			if (strpos($html, '<?xml') !== false && preg_match_all('/<loc>(https?\:\/\/[^\s\<]+)\<\/loc>/', $html, $sitemapUrls)) {
 				foreach ($sitemapUrls[1] ?? [] as $sitemapUrl) {
-					if (Validators::isUrl($sitemapUrl)) {
+					if (Helpers::isUrl($sitemapUrl)) {
 						$this->addUrl($sitemapUrl);
 					}
 				}
@@ -300,7 +323,7 @@ class Crawler
 	 */
 	private function formatHtml(string $html): string
 	{
-		$html = Strings::normalize($html);
+		$html = Helpers::normalize($html);
 		$html = str_replace(
 			['&nbsp;', '&ndash;'],
 			[' ', '-'],
@@ -318,7 +341,7 @@ class Crawler
 	{
 		$headers = [];
 
-		foreach (explode("\n", Strings::normalize($header)) as $_header) {
+		foreach (explode("\n", Helpers::normalize($header)) as $_header) {
 			if (preg_match('/^(?<name>[^:]+):\s*(?<value>.*)$/', $_header, $headerParser)) {
 				$headers[$headerParser['name']] = $headerParser['value'];
 			}
@@ -387,7 +410,7 @@ class Crawler
 
 		if ($response->getHttpCode() === 200) {
 			$this->addUrl($url);
-			foreach (explode("\n", $return = Strings::normalize($response->getHtml())) as $line) {
+			foreach (explode("\n", $return = Helpers::normalize($response->getHtml())) as $line) {
 				$line = trim($line);
 
 				if (preg_match('/^[Ss]itemap:\s+(https?\:\/\/\S+)/', $line, $robots)) {
