@@ -29,17 +29,12 @@ class Crawler
 	/**
 	 * @var \Nette\Http\Url
 	 */
-	private $inputUrl;
+	private $startingUrl;
 
 	/**
 	 * @var string[]
 	 */
 	private $urlList = [];
-
-	/**
-	 * @var string[]
-	 */
-	private $followedUrls = [];
 
 	/**
 	 * @var string[]
@@ -89,10 +84,10 @@ class Crawler
 	{
 		$urls = [];
 
-		$this->inputUrl = new \Nette\Http\Url($url);
+		$this->startingUrl = new \Nette\Http\Url($url);
 		$this->addUrl($url);
 		$robots = $this->processRobots(
-			$this->inputUrl->getScheme() . '://' . $this->inputUrl->getAuthority() . '/robots.txt'
+			$this->startingUrl->getScheme() . '://' . $this->startingUrl->getAuthority() . '/robots.txt'
 		);
 		$crawlerStartTime = \time();
 
@@ -116,7 +111,7 @@ class Crawler
 
 				$texts = $this->textSeparator->getTexts($httpResponse->getHtml());
 
-				$urls[] = new Url(
+				$urlEntity = new Url(
 					$crawledUrl,
 					$httpResponse->getHtml(),
 					$httpResponse->getSize(),
@@ -128,6 +123,7 @@ class Crawler
 					$httpResponse->getLoadingTime(),
 					$httpResponse->getHttpCode()
 				);
+				$urls[$urlEntity->getUrl()->getAbsoluteUrl()] = $urlEntity;
 			} catch (\Throwable $e) {
 				if (class_exists(Debugger::class) === true) {
 					Debugger::log($e);
@@ -144,12 +140,28 @@ class Crawler
 		return new CrawledResult(
 			$this->allUrls,
 			$this->urlList,
-			$this->followedUrls,
+			array_keys($urls),
 			$this->urlReferences,
 			$urls,
 			$this->errors,
 			$robots
 		);
+	}
+
+	/**
+	 * @param string $startingUrl
+	 * @param array $urls
+	 * @return CrawledResult
+	 */
+	public function crawlList(string $startingUrl, array $urls): CrawledResult
+	{
+		foreach ($urls as $url) {
+			if (Validators::isUrl($url) === true) {
+				$this->addUrl($url);
+			}
+		}
+
+		return $this->crawl($startingUrl);
 	}
 
 	/**
@@ -171,13 +183,13 @@ class Crawler
 			$this->allUrls[] = $url;
 		}
 
-		$url = (string) preg_replace('/^(.*?)[\#].*$/', '$1', $url);
+		$url = (string) preg_replace('/^(.*?)(?:[\#].*)?$/', '$1', $url);
 
 		if ($this->config->isFollowExternalLinks() === false && $this->isExternalLink($url)) { // Is external?
 			$canAdd = false;
 		}
 
-		if ($canAdd) { // Is allowed?
+		if ($canAdd === true) { // Is allowed?
 			$isAllowed = false;
 			foreach ($this->config->getAllowedUrls() as $allow) {
 				if (preg_match('/^' . $allow . '$/', $url)) {
@@ -190,7 +202,7 @@ class Crawler
 			}
 		}
 
-		if ($canAdd) { // Is forbidden?
+		if ($canAdd === true) { // Is forbidden?
 			$isForbidden = false;
 			foreach ($this->config->getForbiddenUrls() as $forbidden) {
 				if (preg_match('/^' . $forbidden . '$/', $url)) {
@@ -203,11 +215,11 @@ class Crawler
 			}
 		}
 
-		if ($canAdd && \in_array($url, $this->urlList, true)) { // Is in list?
+		if ($canAdd === true && \in_array($url, $this->urlList, true)) { // Is in list?
 			$canAdd = false;
 		}
 
-		if ($canAdd) {
+		if ($canAdd === true) {
 			$this->urlList[] = $url;
 		}
 	}
@@ -218,7 +230,7 @@ class Crawler
 	 */
 	private function isExternalLink(string $url): bool
 	{
-		return (new \Nette\Http\Url($url))->getDomain(5) !== $this->inputUrl->getDomain(5);
+		return (new \Nette\Http\Url($url))->getDomain(5) !== $this->startingUrl->getDomain(5);
 	}
 
 	/**
@@ -268,8 +280,6 @@ class Crawler
 				$size = strlen($response) - $headerSize;
 			}
 		}
-
-		$this->followedUrls[] = $url;
 
 		preg_match('/^.+?\s+(?<httpCode>\d+)/', $response, $httpCodeParser);
 		preg_match('/<title[^>]*>(?<title>[^<]+)<\/title>/', $html, $titleParser);
