@@ -108,6 +108,12 @@ class Crawler
 				}
 
 				$texts = $this->textSeparator->getTexts($httpResponse->getHtml());
+				$httpCode = $httpResponse->getHttpCode();
+				$headers = $httpResponse->getHeaders();
+
+				if ($httpCode > 300 && $httpCode < 399 && isset($headers['Location']) === true) {
+					$this->addUrl(RelativeUrlToAbsoluteUrl::process($crawledUrl, $headers['Location']));
+				}
 
 				$urlEntity = new Url(
 					$crawledUrl,
@@ -116,10 +122,10 @@ class Crawler
 					trim($httpResponse->getTitle()),
 					$texts->getRegularTexts(),
 					$texts->getUniqueTexts(),
-					$httpResponse->getHeaders(),
+					$headers,
 					$links,
 					$httpResponse->getLoadingTime(),
-					$httpResponse->getHttpCode()
+					$httpCode
 				);
 				$urls[$urlEntity->getUrl()->getAbsoluteUrl()] = $urlEntity;
 			} catch (\Throwable $e) {
