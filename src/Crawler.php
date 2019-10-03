@@ -111,7 +111,7 @@ class Crawler
 				$httpCode = $httpResponse->getHttpCode();
 				$headers = $httpResponse->getHeaders();
 
-				if ($httpCode > 300 && $httpCode < 399 && isset($headers['Location']) === true) {
+				if ($httpCode >= 300 && $httpCode <= 399 && isset($headers['Location']) === true) {
 					$this->addUrl(RelativeUrlToAbsoluteUrl::process($crawledUrl, $headers['Location']));
 				}
 
