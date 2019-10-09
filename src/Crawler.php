@@ -110,16 +110,17 @@ class Crawler
 				$texts = $this->textSeparator->getTexts($httpResponse->getHtml());
 				$httpCode = $httpResponse->getHttpCode();
 				$headers = $httpResponse->getHeaders();
+				$title = trim($httpResponse->getTitle());
 
 				if ($httpCode >= 300 && $httpCode <= 399 && isset($headers['Location']) === true) {
-					$this->addUrl(RelativeUrlToAbsoluteUrl::process($crawledUrl, $headers['Location']));
+					$this->addUrl($title = RelativeUrlToAbsoluteUrl::process($crawledUrl, $headers['Location']));
 				}
 
 				$urlEntity = new Url(
 					$crawledUrl,
 					$httpResponse->getHtml(),
 					$httpResponse->getSize(),
-					trim($httpResponse->getTitle()),
+					$title,
 					$texts->getRegularTexts(),
 					$texts->getUniqueTexts(),
 					$headers,
@@ -197,8 +198,9 @@ class Crawler
 	 */
 	private function processBasicConfig(string $url): void
 	{
-		$this->startingUrl = new UrlHelper($url);
+		$this->startingUrl = $startingUrl = new UrlHelper($url);
 		$this->addUrl($url);
+		$this->addUrl(($startingUrl->getScheme() === 'https' ? 'http' : 'https') . '://' . $startingUrl->getAuthority());
 	}
 
 	/**
