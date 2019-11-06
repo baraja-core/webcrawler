@@ -24,7 +24,7 @@ Crawler can run without dependencies.
 In default settings create instance and call `crawl()` method:
 
 ```php
-$crawler = \Baraja\WebCrawler\Crawler;
+$crawler = new \Baraja\WebCrawler\Crawler;
 
 $result = $crawler->crawl('https://example.com');
 ```
@@ -39,7 +39,7 @@ In real case you need download multiple URLs in single domain and check if some 
 Simple example:
 
 ```php
-$crawler = \Baraja\WebCrawler\Crawler;
+$crawler = new \Baraja\WebCrawler\Crawler;
 
 $result = $crawler->crawlList(
     'https://example.com', // Starting (main) URL
@@ -61,7 +61,7 @@ In constructor of service `Crawler` you can define your project specific configu
 Simply like:
 
 ```php
-$crawler = \Baraja\WebCrawler\Crawler(
+$crawler = new \Baraja\WebCrawler\Crawler(
     new \Baraja\WebCrawler\Config([
         // key => value
     ])
