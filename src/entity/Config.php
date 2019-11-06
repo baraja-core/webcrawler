@@ -57,6 +57,8 @@ class Config
 	}
 
 	/**
+	 * Time in miliseconds.
+	 *
 	 * @return int
 	 */
 	public function getSleepBetweenRequests(): int
