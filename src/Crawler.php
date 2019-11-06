@@ -271,7 +271,7 @@ class Crawler
 	private function loadUrl(string $url): HttpResponse
 	{
 		if ($this->config->getSleepBetweenRequests()) {
-			sleep($this->config->getSleepBetweenRequests());
+			usleep($this->config->getSleepBetweenRequests() * 1000);
 		}
 
 		self::timer($url);
