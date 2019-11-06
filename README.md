@@ -75,7 +75,7 @@ Configuration options:
 | Option                  | Default value | Possible values |
 |-------------------------|---------------|-----------------|
 | `followExternalLinks`   | `false`       | `Bool`: Stay only in given domain? |
-| `sleepBetweenRequests`  | `1000`        | `Int`: Sleep in miliseconds. |
+| `sleepBetweenRequests`  | `1000`        | `Int`: Sleep in milliseconds. |
 | `maxHttpRequests`       | `1000000`     | `Int`: Crawler budget limit. |
 | `maxCrawlTimeInSeconds` | `30`          | `Int`: Stop crawling when limit is exceeded. |
 | `allowedUrls`           | `['.+']`      | `String[]`: List of valid regex about allowed URL format. |
