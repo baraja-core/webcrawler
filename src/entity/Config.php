@@ -57,7 +57,7 @@ class Config
 	}
 
 	/**
-	 * Time in miliseconds.
+	 * Time in milliseconds.
 	 *
 	 * @return int
 	 */
