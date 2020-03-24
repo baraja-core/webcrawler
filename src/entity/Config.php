@@ -5,39 +5,31 @@ declare(strict_types=1);
 namespace Baraja\WebCrawler\Entity;
 
 
-class Config
+final class Config
 {
 
-	/**
-	 * @var bool
-	 */
+	/** @var bool */
 	private $followExternalLinks;
 
-	/**
-	 * @var int
-	 */
+	/** @var int */
 	private $sleepBetweenRequests;
 
-	/**
-	 * @var int
-	 */
+	/** @var int */
 	private $maxHttpRequests;
 
-	/**
-	 * @var int
-	 */
+	/** @var int */
 	private $maxCrawlTimeInSeconds;
 
-	/**
-	 * @var string[]
-	 */
+	/** @var string[] */
 	private $allowedUrls;
 
-	/**
-	 * @var string[]
-	 */
+	/** @var string[] */
 	private $forbiddenUrls;
 
+
+	/**
+	 * @param mixed[] $config
+	 */
 	public function __construct(array $config = [])
 	{
 		$this->followExternalLinks = (bool) ($config['followExternalLinks'] ?? false);
@@ -48,6 +40,7 @@ class Config
 		$this->forbiddenUrls = $config['forbiddenUrls'] ?? [''];
 	}
 
+
 	/**
 	 * @return bool
 	 */
@@ -55,6 +48,7 @@ class Config
 	{
 		return $this->followExternalLinks;
 	}
+
 
 	/**
 	 * Time in milliseconds.
@@ -66,6 +60,7 @@ class Config
 		return $this->sleepBetweenRequests;
 	}
 
+
 	/**
 	 * @return int
 	 */
@@ -73,6 +68,7 @@ class Config
 	{
 		return $this->maxHttpRequests;
 	}
+
 
 	/**
 	 * @return int
@@ -82,6 +78,7 @@ class Config
 		return $this->maxCrawlTimeInSeconds;
 	}
 
+
 	/**
 	 * @return string[]
 	 */
@@ -90,6 +87,7 @@ class Config
 		return $this->allowedUrls;
 	}
 
+
 	/**
 	 * @return string[]
 	 */
@@ -97,5 +95,4 @@ class Config
 	{
 		return $this->forbiddenUrls;
 	}
-
 }

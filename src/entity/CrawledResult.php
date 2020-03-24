@@ -8,34 +8,22 @@ namespace Baraja\WebCrawler\Entity;
 class CrawledResult
 {
 
-	/**
-	 * @var string[]
-	 */
+	/** @var string[] */
 	private $allUrls;
 
-	/**
-	 * @var string[]
-	 */
+	/** @var string[] */
 	private $followedUrls;
 
-	/**
-	 * @var string[]
-	 */
+	/** @var string[] */
 	private $openedUrls;
 
-	/**
-	 * @var string[]
-	 */
+	/** @var string[] */
 	private $urlReferences;
 
-	/**
-	 * @var Url[]
-	 */
+	/** @var Url[] */
 	private $urls;
 
-	/**
-	 * @var string[][]
-	 */
+	/** @var string[][] */
 	private $errors;
 
 	/**
@@ -45,6 +33,16 @@ class CrawledResult
 	 */
 	private $robots;
 
+
+	/**
+	 * @param string[] $allUrls
+	 * @param string[] $followedUrls
+	 * @param string[] $openedUrls
+	 * @param string[] $urlReferences
+	 * @param Url[] $urls
+	 * @param string[] $errors
+	 * @param string|null $robots
+	 */
 	public function __construct(array $allUrls, array $followedUrls, array $openedUrls, array $urlReferences, array $urls, array $errors, ?string $robots)
 	{
 		$this->allUrls = $allUrls;
@@ -56,6 +54,7 @@ class CrawledResult
 		$this->robots = $robots;
 	}
 
+
 	/**
 	 * @return string[]
 	 */
@@ -63,6 +62,7 @@ class CrawledResult
 	{
 		return $this->allUrls;
 	}
+
 
 	/**
 	 * @return string[]
@@ -72,6 +72,7 @@ class CrawledResult
 		return $this->followedUrls;
 	}
 
+
 	/**
 	 * @return string[]
 	 */
@@ -79,6 +80,7 @@ class CrawledResult
 	{
 		return $this->openedUrls;
 	}
+
 
 	/**
 	 * @return string[]
@@ -88,6 +90,7 @@ class CrawledResult
 		return $this->urlReferences;
 	}
 
+
 	/**
 	 * @return Url[]
 	 */
@@ -95,6 +98,7 @@ class CrawledResult
 	{
 		return $this->urls;
 	}
+
 
 	/**
 	 * @return string[][]
@@ -104,6 +108,7 @@ class CrawledResult
 		return $this->errors;
 	}
 
+
 	/**
 	 * @return string|null
 	 */
@@ -111,5 +116,4 @@ class CrawledResult
 	{
 		return $this->robots;
 	}
-
 }

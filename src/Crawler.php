@@ -9,46 +9,34 @@ use Baraja\WebCrawler\Entity\Config;
 use Baraja\WebCrawler\Entity\CrawledResult;
 use Baraja\WebCrawler\Entity\HttpResponse;
 use Baraja\WebCrawler\Entity\Url;
-use Baraja\WebCrawler\Entity\UrlHelper;
+use Nette\Utils\Strings;
+use Nette\Utils\Validators;
 use Tracy\Debugger;
 
-class Crawler
+final class Crawler
 {
 
-	/**
-	 * @var Config
-	 */
+	/** @var Config */
 	private $config;
 
-	/**
-	 * @var ITextSeparator
-	 */
+	/** @var ITextSeparator */
 	private $textSeparator;
 
-	/**
-	 * @var UrlHelper
-	 */
+	/** @var \Nette\Http\Url */
 	private $startingUrl;
 
-	/**
-	 * @var string[]
-	 */
+	/** @var string[] */
 	private $urlList = [];
 
-	/**
-	 * @var string[]
-	 */
+	/** @var string[] */
 	private $allUrls = [];
 
-	/**
-	 * @var string[][]
-	 */
+	/** @var string[][] */
 	private $urlReferences = [];
 
-	/**
-	 * @var string[][]
-	 */
+	/** @var string[][] */
 	private $errors = [];
+
 
 	/**
 	 * @param Config|null $config
@@ -58,6 +46,7 @@ class Crawler
 		$this->config = $config ?? new Config;
 		$this->textSeparator = new TextSeparator;
 	}
+
 
 	/**
 	 * Starts/stops stopwatch from Tracy.
@@ -74,6 +63,7 @@ class Crawler
 
 		return $delta;
 	}
+
 
 	/**
 	 * @param string $url
@@ -153,6 +143,7 @@ class Crawler
 		);
 	}
 
+
 	/**
 	 * Load more urls on start.
 	 *
@@ -166,7 +157,7 @@ class Crawler
 			static $cache;
 
 			if ($cache === null) {
-				$url = new UrlHelper($startingUrl);
+				$url = new \Nette\Http\Url($startingUrl);
 				$cache = trim($url->getScheme() . '://' . $url->getAuthority(), '/');
 			}
 
@@ -176,7 +167,7 @@ class Crawler
 		$this->processBasicConfig($startingUrl);
 
 		foreach ($urls as $url) {
-			$this->addUrl(Helpers::isUrl($url = ltrim($url, '/')) === true // Is absolute URL?
+			$this->addUrl(Validators::isUrl($url = ltrim($url, '/')) === true // Is absolute URL?
 				? $url
 				: $basePath() . '/' . $url
 			);
@@ -184,6 +175,7 @@ class Crawler
 
 		return $this->crawl($startingUrl);
 	}
+
 
 	/**
 	 * @param ITextSeparator $textSeparator
@@ -193,15 +185,17 @@ class Crawler
 		$this->textSeparator = $textSeparator;
 	}
 
+
 	/**
 	 * @param string $url
 	 */
 	private function processBasicConfig(string $url): void
 	{
-		$this->startingUrl = $startingUrl = new UrlHelper($url);
+		$this->startingUrl = $startingUrl = new \Nette\Http\Url($url);
 		$this->addUrl($url);
 		$this->addUrl(($startingUrl->getScheme() === 'https' ? 'http' : 'https') . '://' . $startingUrl->getAuthority());
 	}
+
 
 	/**
 	 * @param string $url
@@ -255,14 +249,16 @@ class Crawler
 		}
 	}
 
+
 	/**
 	 * @param string $url
 	 * @return bool
 	 */
 	private function isExternalLink(string $url): bool
 	{
-		return (new UrlHelper($url))->getDomain(5) !== $this->startingUrl->getDomain(5);
+		return (new \Nette\Http\Url($url))->getDomain(5) !== $this->startingUrl->getDomain(5);
 	}
+
 
 	/**
 	 * @param string $url
@@ -293,12 +289,12 @@ class Crawler
 		}
 
 		if ($contentType === 'application/xml' || strncmp($contentType, 'text/', 5) === 0) {
-			$html = Helpers::normalize((string) substr($response, $headerSize));
+			$html = Strings::normalize((string) substr($response, $headerSize));
 			$size = strlen($html);
 
 			if (strpos($html, '<?xml') !== false && preg_match_all('/<loc>(https?\:\/\/[^\s\<]+)\<\/loc>/', $html, $sitemapUrls)) {
 				foreach ($sitemapUrls[1] ?? [] as $sitemapUrl) {
-					if (Helpers::isUrl($sitemapUrl)) {
+					if (Validators::isUrl($sitemapUrl)) {
 						$this->addUrl($sitemapUrl);
 					}
 				}
@@ -325,13 +321,14 @@ class Crawler
 		);
 	}
 
+
 	/**
 	 * @param string $html
 	 * @return string
 	 */
 	private function formatHtml(string $html): string
 	{
-		$html = Helpers::normalize($html);
+		$html = Strings::normalize($html);
 		$html = str_replace(
 			['&nbsp;', '&ndash;'],
 			[' ', '-'],
@@ -341,6 +338,7 @@ class Crawler
 		return $html;
 	}
 
+
 	/**
 	 * @param string $header
 	 * @return string[]
@@ -349,7 +347,7 @@ class Crawler
 	{
 		$headers = [];
 
-		foreach (explode("\n", Helpers::normalize($header)) as $_header) {
+		foreach (explode("\n", Strings::normalize($header)) as $_header) {
 			if (preg_match('/^(?<name>[^:]+):\s*(?<value>.*)$/', $_header, $headerParser)) {
 				$headers[$headerParser['name']] = $headerParser['value'];
 			}
@@ -357,6 +355,7 @@ class Crawler
 
 		return $headers;
 	}
+
 
 	/**
 	 * @param string $url
@@ -383,6 +382,7 @@ class Crawler
 		return $links;
 	}
 
+
 	/**
 	 * @param string $target
 	 * @param string $source
@@ -407,6 +407,7 @@ class Crawler
 		}
 	}
 
+
 	/**
 	 * @param string $url
 	 * @return string|null
@@ -418,7 +419,7 @@ class Crawler
 
 		if ($response->getHttpCode() === 200) {
 			$this->addUrl($url);
-			foreach (explode("\n", $return = Helpers::normalize($response->getHtml())) as $line) {
+			foreach (explode("\n", $return = Strings::normalize($response->getHtml())) as $line) {
 				$line = trim($line);
 
 				if (preg_match('/^[Ss]itemap:\s+(https?\:\/\/\S+)/', $line, $robots)) {
@@ -429,5 +430,4 @@ class Crawler
 
 		return $return;
 	}
-
 }

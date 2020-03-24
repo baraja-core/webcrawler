@@ -6,14 +6,14 @@ namespace Baraja\WebCrawler;
 
 
 use Baraja\WebCrawler\Entity\TextSeparatorEntity;
+use Nette\Utils\Strings;
 
-class TextSeparator implements ITextSeparator
+final class TextSeparator implements ITextSeparator
 {
 
-	/**
-	 * @var string[]
-	 */
+	/** @var string[] */
 	private $crawledTexts = [];
+
 
 	/**
 	 * @param string $html
@@ -28,7 +28,7 @@ class TextSeparator implements ITextSeparator
 		$regularTexts = [];
 		$uniqueTexts = [];
 
-		foreach ($texts[0] as $text) {
+		foreach ($texts[0] ?? [] as $text) {
 			$text = trim($text);
 			$canAdd = true;
 
@@ -45,7 +45,7 @@ class TextSeparator implements ITextSeparator
 
 			if ($canAdd === true) {
 				$regularTexts[] = $text;
-				$normalizeText = Helpers::webalize($text);
+				$normalizeText = Strings::webalize($text);
 				if (!isset($this->crawledTexts[$normalizeText])) {
 					$uniqueTexts[] = $text;
 					$this->crawledTexts[$normalizeText] = true;
@@ -58,5 +58,4 @@ class TextSeparator implements ITextSeparator
 			$uniqueTexts
 		);
 	}
-
 }

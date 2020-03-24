@@ -5,18 +5,15 @@ declare(strict_types=1);
 namespace Baraja\WebCrawler\Entity;
 
 
-class TextSeparatorEntity
+final class TextSeparatorEntity
 {
 
-	/**
-	 * @var string[]
-	 */
+	/** @var string[] */
 	private $regularTexts;
 
-	/**
-	 * @var string[]
-	 */
+	/** @var string[] */
 	private $uniqueTexts;
+
 
 	/**
 	 * @param string[] $regularTexts
@@ -28,6 +25,7 @@ class TextSeparatorEntity
 		$this->uniqueTexts = $uniqueTexts;
 	}
 
+
 	/**
 	 * @return string[]
 	 */
@@ -36,6 +34,7 @@ class TextSeparatorEntity
 		return $this->regularTexts;
 	}
 
+
 	/**
 	 * @return string[]
 	 */
@@ -43,5 +42,4 @@ class TextSeparatorEntity
 	{
 		return $this->uniqueTexts;
 	}
-
 }

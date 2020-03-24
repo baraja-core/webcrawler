@@ -5,39 +5,36 @@ declare(strict_types=1);
 namespace Baraja\WebCrawler\Entity;
 
 
-class HttpResponse
+final class HttpResponse
 {
 
-	/**
-	 * @var string
-	 */
+	/** @var string */
 	private $html;
 
-	/**
-	 * @var string
-	 */
+	/** @var string */
 	private $title;
 
-	/**
-	 * @var string[]
-	 */
+	/** @var string[] */
 	private $headers;
 
-	/**
-	 * @var float
-	 */
+	/** @var float */
 	private $loadingTime;
 
-	/**
-	 * @var int
-	 */
+	/** @var int */
 	private $httpCode;
 
-	/**
-	 * @var int
-	 */
+	/** @var int */
 	private $size;
 
+
+	/**
+	 * @param string $html
+	 * @param string $title
+	 * @param string[] $headers
+	 * @param float $loadingTime
+	 * @param int $httpCode
+	 * @param int $size
+	 */
 	public function __construct(string $html, string $title, array $headers, float $loadingTime, int $httpCode, int $size)
 	{
 		$this->html = $html;
@@ -48,6 +45,7 @@ class HttpResponse
 		$this->size = $size;
 	}
 
+
 	/**
 	 * @return string
 	 */
@@ -55,6 +53,7 @@ class HttpResponse
 	{
 		return $this->html;
 	}
+
 
 	/**
 	 * @return string
@@ -64,6 +63,7 @@ class HttpResponse
 		return $this->title;
 	}
 
+
 	/**
 	 * @return string[]
 	 */
@@ -71,6 +71,7 @@ class HttpResponse
 	{
 		return $this->headers;
 	}
+
 
 	/**
 	 * @return float
@@ -80,6 +81,7 @@ class HttpResponse
 		return $this->loadingTime;
 	}
 
+
 	/**
 	 * @return int
 	 */
@@ -88,6 +90,7 @@ class HttpResponse
 		return $this->httpCode;
 	}
 
+
 	/**
 	 * @return int
 	 */
@@ -95,5 +98,4 @@ class HttpResponse
 	{
 		return $this->size;
 	}
-
 }

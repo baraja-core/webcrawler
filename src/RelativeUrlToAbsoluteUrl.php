@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Baraja\WebCrawler;
 
 
-class RelativeUrlToAbsoluteUrl
+final class RelativeUrlToAbsoluteUrl
 {
 
 	/**
@@ -84,6 +84,7 @@ class RelativeUrlToAbsoluteUrl
 
 		return self::joinUrl($r);
 	}
+
 
 	/**
 	 * @param string $url
@@ -189,6 +190,7 @@ class RelativeUrlToAbsoluteUrl
 		return $parts;
 	}
 
+
 	/**
 	 * @param string $path
 	 * @return string
@@ -221,6 +223,7 @@ class RelativeUrlToAbsoluteUrl
 
 		return $outPath;
 	}
+
 
 	/**
 	 * @param string[] $parts
@@ -302,5 +305,4 @@ class RelativeUrlToAbsoluteUrl
 
 		return $url;
 	}
-
 }

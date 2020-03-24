@@ -5,62 +5,43 @@ declare(strict_types=1);
 namespace Baraja\WebCrawler\Entity;
 
 
-class Url
+final class Url
 {
 
-	/**
-	 * @var UrlHelper
-	 */
+	/** @var \Nette\Http\Url */
 	private $url;
 
-	/**
-	 * @var string
-	 */
+	/** @var string */
 	private $html;
 
-	/**
-	 * @var int
-	 */
+	/** @var int */
 	private $size;
 
-	/**
-	 * @var string
-	 */
+	/** @var string */
 	private $title;
 
-	/**
-	 * @var string[]
-	 */
+	/** @var string[] */
 	private $texts;
 
-	/**
-	 * @var string[]
-	 */
+	/** @var string[] */
 	private $uniqueTexts;
 
-	/**
-	 * @var string[]
-	 */
+	/** @var string[] */
 	private $links;
 
-	/**
-	 * @var string[]
-	 */
+	/** @var string[] */
 	private $headers;
 
-	/**
-	 * @var float
-	 */
+	/** @var float */
 	private $loadingTime;
 
-	/**
-	 * @var int
-	 */
+	/** @var int */
 	private $httpCode;
+
 
 	public function __construct(string $url, string $html, int $size, string $title, array $texts, array $uniqueTexts, array $headers, array $links, float $loadingTime, int $httpCode)
 	{
-		$this->url = new UrlHelper($url);
+		$this->url = new \Nette\Http\Url($url);
 		$this->html = $html;
 		$this->size = $size;
 		$this->title = $title;
@@ -72,13 +53,15 @@ class Url
 		$this->httpCode = $httpCode;
 	}
 
+
 	/**
-	 * @return UrlHelper
+	 * @return \Nette\Http\Url
 	 */
-	public function getUrl(): UrlHelper
+	public function getUrl(): \Nette\Http\Url
 	{
 		return $this->url;
 	}
+
 
 	/**
 	 * @return string
@@ -88,6 +71,7 @@ class Url
 		return $this->html;
 	}
 
+
 	/**
 	 * @return int
 	 */
@@ -95,6 +79,7 @@ class Url
 	{
 		return $this->size;
 	}
+
 
 	/**
 	 * @return string
@@ -104,6 +89,7 @@ class Url
 		return $this->title;
 	}
 
+
 	/**
 	 * @return string[]
 	 */
@@ -111,6 +97,7 @@ class Url
 	{
 		return $this->texts;
 	}
+
 
 	/**
 	 * @return string[]
@@ -120,6 +107,7 @@ class Url
 		return $this->uniqueTexts;
 	}
 
+
 	/**
 	 * @return string[]
 	 */
@@ -127,6 +115,7 @@ class Url
 	{
 		return $this->links;
 	}
+
 
 	/**
 	 * @return string[]
@@ -136,6 +125,7 @@ class Url
 		return $this->headers;
 	}
 
+
 	/**
 	 * @return float
 	 */
@@ -144,6 +134,7 @@ class Url
 		return $this->loadingTime;
 	}
 
+
 	/**
 	 * @return int
 	 */
@@ -151,5 +142,4 @@ class Url
 	{
 		return $this->httpCode;
 	}
-
 }
