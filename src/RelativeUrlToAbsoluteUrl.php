@@ -93,13 +93,13 @@ final class RelativeUrlToAbsoluteUrl
 	 */
 	private static function splitUrl(string $url, bool $decode = true): ?array
 	{
-		$xUnResSub = 'a-zA-Z\d\-._~\!$&\'()*+,;=';
+		$xUnResSub = 'a-zA-Z\d\-\._~\!$&\'()*+,;=';
 		$xpChar = $xUnResSub . ':@%';
-		$xScheme = '([a-zA-Z][a-zA-Z\d+-.]*)';
+		$xScheme = '([a-zA-Z][a-zA-Z\d+-\.]*)';
 		$xUserInfo = '(([' . $xUnResSub . '%]*)(:([' . $xUnResSub . ':%]*))?)';
 		$xIpv4 = '(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})';
 		$xIpv6 = '(\[([a-fA-F\d.:]+)\])';
-		$xHostName = '([a-zA-Z\d-.%]+)';
+		$xHostName = '([a-zA-Z\d-\.%]+)';
 		$xHost = '(' . $xHostName . '|' . $xIpv4 . '|' . $xIpv6 . ')';
 		$xPort = '(\d*)';
 		$xAuthority = '((' . $xUserInfo . '@)?' . $xHost . '?(:' . $xPort . ')?)';
@@ -217,7 +217,7 @@ final class RelativeUrlToAbsoluteUrl
 			$outPath = '/' . $outPath;
 		}
 
-		if ($outPath !== '/' && (mb_strlen($path) - 1) === mb_strrpos($path, '/', 'UTF-8')) {
+		if ($outPath !== '/' && (mb_strlen($path) - 1) === mb_strrpos($path, '/', 0, 'UTF-8')) {
 			$outPath .= '/';
 		}
 

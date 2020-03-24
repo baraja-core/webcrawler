@@ -11,7 +11,7 @@ use Nette\Utils\Strings;
 final class TextSeparator implements ITextSeparator
 {
 
-	/** @var string[] */
+	/** @var true[] */
 	private $crawledTexts = [];
 
 
@@ -46,7 +46,7 @@ final class TextSeparator implements ITextSeparator
 			if ($canAdd === true) {
 				$regularTexts[] = $text;
 				$normalizeText = Strings::webalize($text);
-				if (!isset($this->crawledTexts[$normalizeText])) {
+				if (isset($this->crawledTexts[$normalizeText]) === false) {
 					$uniqueTexts[] = $text;
 					$this->crawledTexts[$normalizeText] = true;
 				}

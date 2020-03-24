@@ -17,13 +17,13 @@ class CrawledResult
 	/** @var string[] */
 	private $openedUrls;
 
-	/** @var string[] */
+	/** @var string[][] */
 	private $urlReferences;
 
 	/** @var Url[] */
 	private $urls;
 
-	/** @var string[][] */
+	/** @var mixed[][] */
 	private $errors;
 
 	/**
@@ -38,9 +38,9 @@ class CrawledResult
 	 * @param string[] $allUrls
 	 * @param string[] $followedUrls
 	 * @param string[] $openedUrls
-	 * @param string[] $urlReferences
+	 * @param string[][] $urlReferences
 	 * @param Url[] $urls
-	 * @param string[] $errors
+	 * @param mixed[][] $errors
 	 * @param string|null $robots
 	 */
 	public function __construct(array $allUrls, array $followedUrls, array $openedUrls, array $urlReferences, array $urls, array $errors, ?string $robots)
@@ -83,7 +83,7 @@ class CrawledResult
 
 
 	/**
-	 * @return string[]
+	 * @return string[][]
 	 */
 	public function getUrlReferences(): array
 	{
@@ -101,7 +101,7 @@ class CrawledResult
 
 
 	/**
-	 * @return string[][]
+	 * @return mixed[][]
 	 */
 	public function getErrors(): array
 	{

@@ -34,7 +34,7 @@ final class Crawler
 	/** @var string[][] */
 	private $urlReferences = [];
 
-	/** @var string[][] */
+	/** @var mixed[][] */
 	private $errors = [];
 
 

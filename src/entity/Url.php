@@ -27,10 +27,10 @@ final class Url
 	private $uniqueTexts;
 
 	/** @var string[] */
-	private $links;
+	private $headers;
 
 	/** @var string[] */
-	private $headers;
+	private $links;
 
 	/** @var float */
 	private $loadingTime;
@@ -39,6 +39,18 @@ final class Url
 	private $httpCode;
 
 
+	/**
+	 * @param string $url
+	 * @param string $html
+	 * @param int $size
+	 * @param string $title
+	 * @param string[] $texts
+	 * @param string[] $uniqueTexts
+	 * @param string[] $headers
+	 * @param string[] $links
+	 * @param float $loadingTime
+	 * @param int $httpCode
+	 */
 	public function __construct(string $url, string $html, int $size, string $title, array $texts, array $uniqueTexts, array $headers, array $links, float $loadingTime, int $httpCode)
 	{
 		$this->url = new \Nette\Http\Url($url);
