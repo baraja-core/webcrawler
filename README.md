@@ -1,6 +1,8 @@
 Web crawler
 ===========
 
+![Integrity check](https://github.com/baraja-core/webcrawler/workflows/Integrity%20check/badge.svg)
+
 Simply library for crawling websites by following links with minimal dependencies.
 
 [Czech documentation](https://php.baraja.cz/stazeni-celeho-webu-po-odkazech)
