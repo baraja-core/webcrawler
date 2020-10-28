@@ -135,22 +135,22 @@ final class RelativeUrlToAbsoluteUrl
 		if (!$decode) {
 			return $parts;
 		}
-		if (!empty($parts['user'])) {
+		if ($parts['user'] ?? false) {
 			$parts['user'] = rawurldecode($parts['user']);
 		}
-		if (!empty($parts['pass'])) {
+		if ($parts['pass'] ?? false) {
 			$parts['pass'] = rawurldecode($parts['pass']);
 		}
-		if (!empty($parts['path'])) {
+		if ($parts['path'] ?? false) {
 			$parts['path'] = rawurldecode($parts['path']);
 		}
 		if (isset($h)) {
 			$parts['host'] = rawurldecode($parts['host']);
 		}
-		if (!empty($parts['query'])) {
+		if ($parts['query'] ?? false) {
 			$parts['query'] = rawurldecode($parts['query']);
 		}
-		if (!empty($parts['fragment'])) {
+		if ($parts['fragment'] ?? false) {
 			$parts['fragment'] = rawurldecode($parts['fragment']);
 		}
 
