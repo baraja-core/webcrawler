@@ -7,24 +7,19 @@ namespace Baraja\WebCrawler\Entity;
 
 final class Config
 {
+	private bool $followExternalLinks;
 
-	/** @var bool */
-	private $followExternalLinks;
+	private int $sleepBetweenRequests;
 
-	/** @var int */
-	private $sleepBetweenRequests;
+	private int $maxHttpRequests;
 
-	/** @var int */
-	private $maxHttpRequests;
-
-	/** @var int */
-	private $maxCrawlTimeInSeconds;
+	private int $maxCrawlTimeInSeconds;
 
 	/** @var string[] */
-	private $allowedUrls;
+	private array $allowedUrls;
 
 	/** @var string[] */
-	private $forbiddenUrls;
+	private array $forbiddenUrls;
 
 
 	/**
@@ -41,38 +36,25 @@ final class Config
 	}
 
 
-	/**
-	 * @return bool
-	 */
 	public function isFollowExternalLinks(): bool
 	{
 		return $this->followExternalLinks;
 	}
 
 
-	/**
-	 * Time in milliseconds.
-	 *
-	 * @return int
-	 */
+	/** Time in milliseconds. */
 	public function getSleepBetweenRequests(): int
 	{
 		return $this->sleepBetweenRequests;
 	}
 
 
-	/**
-	 * @return int
-	 */
 	public function getMaxHttpRequests(): int
 	{
 		return $this->maxHttpRequests;
 	}
 
 
-	/**
-	 * @return int
-	 */
 	public function getMaxCrawlTimeInSeconds(): int
 	{
 		return $this->maxCrawlTimeInSeconds;

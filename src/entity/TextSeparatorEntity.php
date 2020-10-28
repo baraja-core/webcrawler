@@ -9,10 +9,10 @@ final class TextSeparatorEntity
 {
 
 	/** @var string[] */
-	private $regularTexts;
+	private array $regularTexts;
 
 	/** @var string[] */
-	private $uniqueTexts;
+	private array $uniqueTexts;
 
 
 	/**

@@ -15,45 +15,33 @@ use Tracy\Debugger;
 
 final class Crawler
 {
+	private Config $config;
 
-	/** @var Config */
-	private $config;
+	private ITextSeparator $textSeparator;
 
-	/** @var ITextSeparator */
-	private $textSeparator;
-
-	/** @var \Nette\Http\Url */
-	private $startingUrl;
+	private \Nette\Http\Url $startingUrl;
 
 	/** @var string[] */
-	private $urlList = [];
+	private array $urlList = [];
 
 	/** @var string[] */
-	private $allUrls = [];
+	private array $allUrls = [];
 
 	/** @var string[][] */
-	private $urlReferences = [];
+	private array $urlReferences = [];
 
 	/** @var mixed[][] */
-	private $errors = [];
+	private array $errors = [];
 
 
-	/**
-	 * @param Config|null $config
-	 */
-	public function __construct(Config $config = null)
+	public function __construct(?Config $config = null)
 	{
 		$this->config = $config ?? new Config;
 		$this->textSeparator = new TextSeparator;
 	}
 
 
-	/**
-	 * Starts/stops stopwatch from Tracy.
-	 *
-	 * @param string $name
-	 * @return float elapsed seconds
-	 */
+	/** Starts/stops stopwatch from Tracy. Return elapsed seconds. */
 	private static function timer(string $name): float
 	{
 		static $time = [];
@@ -65,10 +53,6 @@ final class Crawler
 	}
 
 
-	/**
-	 * @param string $url
-	 * @return CrawledResult
-	 */
 	public function crawl(string $url): CrawledResult
 	{
 		$urls = [];
@@ -87,7 +71,6 @@ final class Crawler
 			}
 
 			$crawledUrl = $this->urlList[$iterator];
-
 			try {
 				$httpResponse = $this->loadUrl($crawledUrl);
 				$links = $this->getLinksFromHTML($crawledUrl, $httpResponse->getHtml());
@@ -147,7 +130,6 @@ final class Crawler
 	/**
 	 * Load more urls on start.
 	 *
-	 * @param string $startingUrl
 	 * @param string[] $urls accept array of absolute or relative urls.
 	 * @return CrawledResult
 	 */
@@ -155,7 +137,6 @@ final class Crawler
 	{
 		$basePath = function () use ($startingUrl): string {
 			static $cache;
-
 			if ($cache === null) {
 				$url = new \Nette\Http\Url($startingUrl);
 				$cache = trim($url->getScheme() . '://' . $url->getAuthority(), '/');
@@ -165,7 +146,6 @@ final class Crawler
 		};
 
 		$this->processBasicConfig($startingUrl);
-
 		foreach ($urls as $url) {
 			$this->addUrl(Validators::isUrl($url = ltrim($url, '/')) === true // Is absolute URL?
 				? $url
@@ -177,18 +157,12 @@ final class Crawler
 	}
 
 
-	/**
-	 * @param ITextSeparator $textSeparator
-	 */
 	public function setTextSeparator(ITextSeparator $textSeparator): void
 	{
 		$this->textSeparator = $textSeparator;
 	}
 
 
-	/**
-	 * @param string $url
-	 */
 	private function processBasicConfig(string $url): void
 	{
 		$this->startingUrl = $startingUrl = new \Nette\Http\Url($url);
@@ -197,23 +171,17 @@ final class Crawler
 	}
 
 
-	/**
-	 * @param string $url
-	 */
 	private function addUrl(string $url): void
 	{
-		$canAdd = true;
-
 		if (!\in_array($url, $this->allUrls, true)) {
 			$this->allUrls[] = $url;
 		}
 
 		$url = (string) preg_replace('/^(.*?)(?:[\#].*)?$/', '$1', $url);
-
+		$canAdd = true;
 		if ($this->config->isFollowExternalLinks() === false && $this->isExternalLink($url)) { // Is external?
 			$canAdd = false;
 		}
-
 		if ($canAdd === true) { // Is allowed?
 			$isAllowed = false;
 			foreach ($this->config->getAllowedUrls() as $allow) {
@@ -226,7 +194,6 @@ final class Crawler
 				$canAdd = false;
 			}
 		}
-
 		if ($canAdd === true) { // Is forbidden?
 			$isForbidden = false;
 			foreach ($this->config->getForbiddenUrls() as $forbidden) {
@@ -239,31 +206,21 @@ final class Crawler
 				$canAdd = false;
 			}
 		}
-
 		if ($canAdd === true && \in_array($url, $this->urlList, true)) { // Is in list?
 			$canAdd = false;
 		}
-
 		if ($canAdd === true) {
 			$this->urlList[] = $url;
 		}
 	}
 
 
-	/**
-	 * @param string $url
-	 * @return bool
-	 */
 	private function isExternalLink(string $url): bool
 	{
 		return (new \Nette\Http\Url($url))->getDomain(5) !== $this->startingUrl->getDomain(5);
 	}
 
 
-	/**
-	 * @param string $url
-	 * @return HttpResponse
-	 */
 	private function loadUrl(string $url): HttpResponse
 	{
 		if ($this->config->getSleepBetweenRequests()) {
@@ -279,7 +236,6 @@ final class Crawler
 		curl_setopt($ch, CURLOPT_HEADER, 1);
 
 		$response = curl_exec($ch);
-
 		$headerSize = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
 		$header = substr($response, 0, $headerSize);
 		$contentType = '';
@@ -322,10 +278,6 @@ final class Crawler
 	}
 
 
-	/**
-	 * @param string $html
-	 * @return string
-	 */
 	private function formatHtml(string $html): string
 	{
 		$html = Strings::normalize($html);
@@ -340,65 +292,54 @@ final class Crawler
 
 
 	/**
-	 * @param string $header
 	 * @return string[]
 	 */
 	private function formatHeaders(string $header): array
 	{
-		$headers = [];
-
+		$return = [];
 		foreach (explode("\n", Strings::normalize($header)) as $_header) {
 			if (preg_match('/^(?<name>[^:]+):\s*(?<value>.*)$/', $_header, $headerParser)) {
-				$headers[$headerParser['name']] = $headerParser['value'];
+				$return[$headerParser['name']] = $headerParser['value'];
 			}
 		}
 
-		return $headers;
+		return $return;
 	}
 
 
 	/**
-	 * @param string $url
-	 * @param string $html
 	 * @return string[]
 	 */
 	private function getLinksFromHTML(string $url, string $html): array
 	{
-		$links = [];
-
+		$return = [];
 		if (preg_match_all('/<a[^>]+>/', $html, $aLinks)) {
 			foreach ($aLinks[0] as $aLink) {
 				if (preg_match('/href=[\'"](?<url>[^\'"]+)[\'"]/', $aLink, $link)
 					&& !preg_match('/^(?:mailto|tel|phone)\:/', $link['url'])
 				) {
 					$formattedLink = RelativeUrlToAbsoluteUrl::process($url, $link['url']);
-					if ($formattedLink !== null && !in_array($formattedLink, $links, true)) {
-						$links[] = $formattedLink;
+					if ($formattedLink !== null && !in_array($formattedLink, $return, true)) {
+						$return[] = $formattedLink;
 					}
 				}
 			}
 		}
 
-		return $links;
+		return $return;
 	}
 
 
-	/**
-	 * @param string $target
-	 * @param string $source
-	 */
 	private function addUrlReference(string $target, string $source): void
 	{
 		if (isset($this->urlReferences[$source])) {
 			$referenceExists = false;
-
 			foreach ($this->urlReferences[$source] as $reference) {
 				if ($reference === $target) {
 					$referenceExists = true;
 					break;
 				}
 			}
-
 			if ($referenceExists === false) {
 				$this->urlReferences[$source][] = $target;
 			}
@@ -408,20 +349,14 @@ final class Crawler
 	}
 
 
-	/**
-	 * @param string $url
-	 * @return string|null
-	 */
 	private function processRobots(string $url): ?string
 	{
 		$return = null;
 		$response = $this->loadUrl($url);
-
 		if ($response->getHttpCode() === 200) {
 			$this->addUrl($url);
 			foreach (explode("\n", $return = Strings::normalize($response->getHtml())) as $line) {
 				$line = trim($line);
-
 				if (preg_match('/^[Ss]itemap:\s+(https?\:\/\/\S+)/', $line, $robots)) {
 					$this->addUrl($robots[1]);
 				}

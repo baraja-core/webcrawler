@@ -7,33 +7,22 @@ namespace Baraja\WebCrawler\Entity;
 
 final class HttpResponse
 {
+	private string $html;
 
-	/** @var string */
-	private $html;
+	private string $title;
 
-	/** @var string */
-	private $title;
+	private float $loadingTime;
+
+	private int $httpCode;
+
+	private int $size;
 
 	/** @var string[] */
-	private $headers;
-
-	/** @var float */
-	private $loadingTime;
-
-	/** @var int */
-	private $httpCode;
-
-	/** @var int */
-	private $size;
+	private array $headers;
 
 
 	/**
-	 * @param string $html
-	 * @param string $title
 	 * @param string[] $headers
-	 * @param float $loadingTime
-	 * @param int $httpCode
-	 * @param int $size
 	 */
 	public function __construct(string $html, string $title, array $headers, float $loadingTime, int $httpCode, int $size)
 	{
@@ -46,18 +35,12 @@ final class HttpResponse
 	}
 
 
-	/**
-	 * @return string
-	 */
 	public function getHtml(): string
 	{
 		return $this->html;
 	}
 
 
-	/**
-	 * @return string
-	 */
 	public function getTitle(): string
 	{
 		return $this->title;
@@ -73,27 +56,18 @@ final class HttpResponse
 	}
 
 
-	/**
-	 * @return float
-	 */
 	public function getLoadingTime(): float
 	{
 		return $this->loadingTime;
 	}
 
 
-	/**
-	 * @return int
-	 */
 	public function getHttpCode(): int
 	{
 		return $this->httpCode;
 	}
 
 
-	/**
-	 * @return int
-	 */
 	public function getSize(): int
 	{
 		return $this->size;

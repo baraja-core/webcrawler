@@ -12,13 +12,9 @@ final class TextSeparator implements ITextSeparator
 {
 
 	/** @var true[] */
-	private $crawledTexts = [];
+	private array $crawledTexts = [];
 
 
-	/**
-	 * @param string $html
-	 * @return TextSeparatorEntity
-	 */
 	public function getTexts(string $html): TextSeparatorEntity
 	{
 		$html = (string) preg_replace('/\s+/', ' ', $html);
@@ -27,12 +23,9 @@ final class TextSeparator implements ITextSeparator
 
 		$regularTexts = [];
 		$uniqueTexts = [];
-
 		foreach ($texts[0] ?? [] as $text) {
-			$text = trim($text);
 			$canAdd = true;
-
-			if (preg_match('/^\-\-\s*.+(\s*\-\-)?$/', $text)) {
+			if (preg_match('/^\-\-\s*.+(\s*\-\-)?$/', $text = trim($text))) {
 				$canAdd = false;
 			}
 
@@ -42,7 +35,6 @@ final class TextSeparator implements ITextSeparator
 			if (count($numbers[0]) > count($chars[0])) {
 				$canAdd = false;
 			}
-
 			if ($canAdd === true) {
 				$regularTexts[] = $text;
 				$normalizeText = Strings::webalize($text);

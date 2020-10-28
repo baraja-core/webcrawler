@@ -7,12 +7,6 @@ namespace Baraja\WebCrawler;
 
 final class RelativeUrlToAbsoluteUrl
 {
-
-	/**
-	 * @param string $baseUrl
-	 * @param string $relativeUrl
-	 * @return string|null
-	 */
 	public static function process(string $baseUrl, string $relativeUrl): ?string
 	{
 		$r = self::splitUrl($relativeUrl);
@@ -20,7 +14,6 @@ final class RelativeUrlToAbsoluteUrl
 		if ($r === null) {
 			return null;
 		}
-
 		if (!empty($r['scheme'])) {
 			if (!empty($r['path']) && strpos($r['path'], '/') === 0) {
 				$r['path'] = self::urlRemoveDotSegments($r['path']);
@@ -30,13 +23,11 @@ final class RelativeUrlToAbsoluteUrl
 		}
 
 		$b = self::splitUrl($baseUrl);
-
 		if ($b === null || empty($b['scheme']) || empty($b['host'])) {
 			return null;
 		}
 
 		$r['scheme'] = $b['scheme'];
-
 		if (isset($r['host'])) {
 			if (!empty($r['path'])) {
 				$r['path'] = self::urlRemoveDotSegments($r['path']);
@@ -46,7 +37,6 @@ final class RelativeUrlToAbsoluteUrl
 		}
 
 		unset($r['port'], $r['user'], $r['pass']);
-
 		$r['host'] = $b['host'];
 		if (isset($b['port'])) {
 			$r['port'] = $b['port'];
@@ -57,7 +47,6 @@ final class RelativeUrlToAbsoluteUrl
 		if (isset($b['pass'])) {
 			$r['pass'] = $b['pass'];
 		}
-
 		if (empty($r['path'])) {
 			if (!empty($b['path'])) {
 				$r['path'] = $b['path'];
@@ -69,14 +58,10 @@ final class RelativeUrlToAbsoluteUrl
 
 			return self::joinUrl($r);
 		}
-
 		if ($r['path'][0] !== '/') {
-			$base = mb_strrchr($b['path'] ?? '', '/', true, 'UTF-8');
-
-			if ($base === false) {
+			if (($base = mb_strrchr($b['path'] ?? '', '/', true, 'UTF-8')) === false) {
 				$base = '';
 			}
-
 			$r['path'] = $base . '/' . $r['path'];
 		}
 
@@ -87,8 +72,6 @@ final class RelativeUrlToAbsoluteUrl
 
 
 	/**
-	 * @param string $url
-	 * @param bool $decode
 	 * @return string[]|null
 	 */
 	private static function splitUrl(string $url, bool $decode = true): ?array
@@ -110,25 +93,20 @@ final class RelativeUrlToAbsoluteUrl
 		$xaPath = '(' . $xPathAuthAbs . '|' . $xPathAbs . '|' . $xPathRel . ')';
 		$xQueryFrag = '([' . $xpChar . '/?' . ']*)';
 		$xUrl = '^(' . $xScheme . ':)?' . $xaPath . '?(\?' . $xQueryFrag . ')?(#' . $xQueryFrag . ')?$';
-
 		if (!preg_match('!' . $xUrl . '!', $url, $m)) {
 			return null;
 		}
 
 		$parts = [];
-
 		if (!empty($m[2])) {
 			$parts['scheme'] = mb_strtolower($m[2], 'UTF-8');
 		}
-
 		if (!empty($m[7])) {
 			$parts['user'] = $m[9] ?? '';
 		}
-
 		if (!empty($m[10])) {
 			$parts['pass'] = $m[11];
 		}
-
 		if (!empty($m[13])) {
 			$h = $parts['host'] = $m[13];
 		} elseif (!empty($m[14])) {
@@ -138,11 +116,9 @@ final class RelativeUrlToAbsoluteUrl
 		} elseif (!empty($m[5])) {
 			$parts['host'] = '';
 		}
-
 		if (!empty($m[17])) {
 			$parts['port'] = $m[18];
 		}
-
 		if (!empty($m[19])) {
 			$parts['path'] = $m[19];
 		} elseif (!empty($m[21])) {
@@ -150,39 +126,30 @@ final class RelativeUrlToAbsoluteUrl
 		} elseif (!empty($m[25])) {
 			$parts['path'] = $m[25];
 		}
-
 		if (!empty($m[27])) {
 			$parts['query'] = $m[28];
 		}
-
 		if (!empty($m[29])) {
 			$parts['fragment'] = $m[30];
 		}
-
 		if (!$decode) {
 			return $parts;
 		}
-
 		if (!empty($parts['user'])) {
 			$parts['user'] = rawurldecode($parts['user']);
 		}
-
 		if (!empty($parts['pass'])) {
 			$parts['pass'] = rawurldecode($parts['pass']);
 		}
-
 		if (!empty($parts['path'])) {
 			$parts['path'] = rawurldecode($parts['path']);
 		}
-
 		if (isset($h)) {
 			$parts['host'] = rawurldecode($parts['host']);
 		}
-
 		if (!empty($parts['query'])) {
 			$parts['query'] = rawurldecode($parts['query']);
 		}
-
 		if (!empty($parts['fragment'])) {
 			$parts['fragment'] = rawurldecode($parts['fragment']);
 		}
@@ -191,20 +158,13 @@ final class RelativeUrlToAbsoluteUrl
 	}
 
 
-	/**
-	 * @param string $path
-	 * @return string
-	 */
 	private static function urlRemoveDotSegments(string $path): string
 	{
-		$inputSegments = preg_split('!/!u', $path);
 		$outputSegments = [];
-
-		foreach ($inputSegments as $seg) {
+		foreach (preg_split('!/!u', $path) ?? [] as $seg) {
 			if ($seg === '' || $seg === '.') {
 				continue;
 			}
-
 			if ($seg === '..') {
 				array_pop($outputSegments);
 			} else {
@@ -216,7 +176,6 @@ final class RelativeUrlToAbsoluteUrl
 		if (strpos($path, '/') === 0) {
 			$outPath = '/' . $outPath;
 		}
-
 		if ($outPath !== '/' && (mb_strlen($path) - 1) === mb_strrpos($path, '/', 0, 'UTF-8')) {
 			$outPath .= '/';
 		}
@@ -227,7 +186,6 @@ final class RelativeUrlToAbsoluteUrl
 
 	/**
 	 * @param string[] $parts
-	 * @param bool $encode
 	 * @return string
 	 */
 	private static function joinUrl(array $parts, bool $encode = true): string
@@ -236,23 +194,18 @@ final class RelativeUrlToAbsoluteUrl
 			if (isset($parts['user'])) {
 				$parts['user'] = rawurlencode($parts['user']);
 			}
-
 			if (isset($parts['pass'])) {
 				$parts['pass'] = rawurlencode($parts['pass']);
 			}
-
 			if (isset($parts['host']) && !preg_match('!^(\[[\da-f.:]+\]])|([\da-f.:]+)$!ui', $parts['host'])) {
 				$parts['host'] = rawurlencode($parts['host']);
 			}
-
 			if (!empty($parts['path'])) {
 				$parts['path'] = preg_replace('!%2F!ui', '/', rawurlencode($parts['path']));
 			}
-
 			if (isset($parts['query'])) {
 				$parts['query'] = rawurlencode($parts['query']);
 			}
-
 			if (isset($parts['fragment'])) {
 				$parts['fragment'] = rawurlencode($parts['fragment']);
 			}
@@ -265,10 +218,8 @@ final class RelativeUrlToAbsoluteUrl
 
 		if (isset($parts['host'])) {
 			$url .= '//';
-
 			if (isset($parts['user'])) {
 				$url .= $parts['user'];
-
 				if (isset($parts['pass'])) {
 					$url .= ':' . $parts['pass'];
 				}
@@ -281,24 +232,19 @@ final class RelativeUrlToAbsoluteUrl
 			} else {
 				$url .= $parts['host'];
 			}
-
 			if (isset($parts['port'])) {
 				$url .= ':' . $parts['port'];
 			}
-
 			if (!empty($parts['path']) && $parts['path'][0] !== '/') {
 				$url .= '/';
 			}
 		}
-
 		if (!empty($parts['path'])) {
 			$url .= $parts['path'];
 		}
-
 		if (isset($parts['query'])) {
 			$url .= '?' . $parts['query'];
 		}
-
 		if (isset($parts['fragment'])) {
 			$url .= '#' . $parts['fragment'];
 		}

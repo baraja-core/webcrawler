@@ -5,33 +5,29 @@ declare(strict_types=1);
 namespace Baraja\WebCrawler\Entity;
 
 
-class CrawledResult
+final class CrawledResult
 {
 
 	/** @var string[] */
-	private $allUrls;
+	private array $allUrls;
 
 	/** @var string[] */
-	private $followedUrls;
+	private array $followedUrls;
 
 	/** @var string[] */
-	private $openedUrls;
+	private array $openedUrls;
 
 	/** @var string[][] */
-	private $urlReferences;
+	private array $urlReferences;
 
 	/** @var Url[] */
-	private $urls;
+	private array $urls;
 
 	/** @var mixed[][] */
-	private $errors;
+	private array $errors;
 
-	/**
-	 * Content of robots.txt file if exist.
-	 *
-	 * @var string|null
-	 */
-	private $robots;
+	/** Content of robots.txt file if exist. */
+	private ?string $robots;
 
 
 	/**
@@ -41,7 +37,6 @@ class CrawledResult
 	 * @param string[][] $urlReferences
 	 * @param Url[] $urls
 	 * @param mixed[][] $errors
-	 * @param string|null $robots
 	 */
 	public function __construct(array $allUrls, array $followedUrls, array $openedUrls, array $urlReferences, array $urls, array $errors, ?string $robots)
 	{
@@ -109,9 +104,6 @@ class CrawledResult
 	}
 
 
-	/**
-	 * @return string|null
-	 */
 	public function getRobots(): ?string
 	{
 		return $this->robots;

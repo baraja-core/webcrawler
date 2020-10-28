@@ -9,9 +9,5 @@ use Baraja\WebCrawler\Entity\TextSeparatorEntity;
 
 interface ITextSeparator
 {
-	/**
-	 * @param string $html
-	 * @return TextSeparatorEntity
-	 */
 	public function getTexts(string $html): TextSeparatorEntity;
 }
