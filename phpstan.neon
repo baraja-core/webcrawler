@@ -5,3 +5,4 @@ includes:
 parameters:
 	ignoreErrors:
 		- '#Regex pattern is invalid: Compilation failed: invalid range in character class at offset 122 in pattern: .*#'
+		- '#Offset \'[^']+\' does not exist on array\(\).*#'
