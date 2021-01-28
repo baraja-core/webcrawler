@@ -86,7 +86,7 @@ final class Crawler
 				$title = trim($httpResponse->getTitle());
 
 				if ($httpCode >= 300 && $httpCode <= 399 && isset($headers['Location']) === true) {
-					$this->addUrl($title = RelativeUrlToAbsoluteUrl::process($crawledUrl, $headers['Location']));
+					$this->addUrl($title = (string) RelativeUrlToAbsoluteUrl::process($crawledUrl, $headers['Location']));
 				}
 
 				$urlEntity = new Url(
@@ -235,7 +235,7 @@ final class Crawler
 		curl_setopt($ch, CURLOPT_VERBOSE, 1);
 		curl_setopt($ch, CURLOPT_HEADER, 1);
 
-		$response = curl_exec($ch);
+		$response = (string) curl_exec($ch);
 		$headerSize = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
 		$header = substr($response, 0, $headerSize);
 		$contentType = '';
@@ -243,7 +243,6 @@ final class Crawler
 		if (preg_match('/Content-Type:\s+(\S+)/', $response, $contentTypeParser)) {
 			$contentType = $contentTypeParser[1];
 		}
-
 		if ($contentType === 'application/xml' || strncmp($contentType, 'text/', 5) === 0) {
 			$html = Strings::normalize((string) substr($response, $headerSize));
 			$size = strlen($html);

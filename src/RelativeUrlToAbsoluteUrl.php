@@ -161,7 +161,7 @@ final class RelativeUrlToAbsoluteUrl
 	private static function urlRemoveDotSegments(string $path): string
 	{
 		$outputSegments = [];
-		foreach (preg_split('!/!u', $path) ?? [] as $seg) {
+		foreach ((array) (preg_split('!/!u', $path) ?? []) as $seg) {
 			if ($seg === '' || $seg === '.') {
 				continue;
 			}
