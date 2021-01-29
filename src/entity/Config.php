@@ -28,8 +28,8 @@ final class Config
 	public function __construct(array $config = [])
 	{
 		$this->followExternalLinks = (bool) ($config['followExternalLinks'] ?? false);
-		$this->sleepBetweenRequests = (int) ($config['sleepBetweenRequests'] ?? 1000);
-		$this->maxHttpRequests = (int) ($config['maxHttpRequests'] ?? 1000000);
+		$this->sleepBetweenRequests = (int) ($config['sleepBetweenRequests'] ?? 1_000);
+		$this->maxHttpRequests = (int) ($config['maxHttpRequests'] ?? 1_000_000);
 		$this->maxCrawlTimeInSeconds = (int) ($config['maxCrawlTimeInSeconds'] ?? 30);
 		$this->allowedUrls = $config['allowedUrls'] ?? ['.+'];
 		$this->forbiddenUrls = $config['forbiddenUrls'] ?? [''];

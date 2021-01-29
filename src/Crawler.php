@@ -225,7 +225,7 @@ final class Crawler
 	private function loadUrl(string $url): HttpResponse
 	{
 		if ($this->config->getSleepBetweenRequests()) {
-			usleep($this->config->getSleepBetweenRequests() * 1000);
+			usleep($this->config->getSleepBetweenRequests() * 1_000);
 		}
 
 		self::timer($url);
@@ -274,7 +274,7 @@ final class Crawler
 			$this->formatHtml($html),
 			$titleParser['title'] ?? $url,
 			$this->formatHeaders($header),
-			self::timer($url) * 1000,
+			self::timer($url) * 1_000,
 			(int) ($httpCodeParser['httpCode'] ?? 500),
 			$size < 0 ? 0 : $size,
 		);
