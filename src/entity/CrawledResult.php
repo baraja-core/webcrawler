@@ -38,8 +38,15 @@ final class CrawledResult
 	 * @param Url[] $urls
 	 * @param mixed[][] $errors
 	 */
-	public function __construct(array $allUrls, array $followedUrls, array $openedUrls, array $urlReferences, array $urls, array $errors, ?string $robots)
-	{
+	public function __construct(
+		array $allUrls,
+		array $followedUrls,
+		array $openedUrls,
+		array $urlReferences,
+		array $urls,
+		array $errors,
+		?string $robots
+	) {
 		$this->allUrls = $allUrls;
 		$this->followedUrls = $followedUrls;
 		$this->openedUrls = $openedUrls;

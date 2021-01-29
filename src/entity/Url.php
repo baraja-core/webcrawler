@@ -38,8 +38,18 @@ final class Url
 	 * @param string[] $headers
 	 * @param string[] $links
 	 */
-	public function __construct(string $url, string $html, int $size, string $title, array $texts, array $uniqueTexts, array $headers, array $links, float $loadingTime, int $httpCode)
-	{
+	public function __construct(
+		string $url,
+		string $html,
+		int $size,
+		string $title,
+		array $texts,
+		array $uniqueTexts,
+		array $headers,
+		array $links,
+		float $loadingTime,
+		int $httpCode
+	) {
 		$this->url = new \Nette\Http\Url($url);
 		$this->html = $html;
 		$this->size = $size;

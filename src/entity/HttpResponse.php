@@ -24,8 +24,14 @@ final class HttpResponse
 	/**
 	 * @param string[] $headers
 	 */
-	public function __construct(string $html, string $title, array $headers, float $loadingTime, int $httpCode, int $size)
-	{
+	public function __construct(
+		string $html,
+		string $title,
+		array $headers,
+		float $loadingTime,
+		int $httpCode,
+		int $size
+	) {
 		$this->html = $html;
 		$this->title = $title;
 		$this->headers = $headers;

@@ -59,7 +59,7 @@ final class Crawler
 
 		$this->processBasicConfig($url);
 		$robots = $this->processRobots(
-			$this->startingUrl->getScheme() . '://' . $this->startingUrl->getAuthority() . '/robots.txt'
+			$this->startingUrl->getScheme() . '://' . $this->startingUrl->getAuthority() . '/robots.txt',
 		);
 		$crawlerStartTime = \time();
 
@@ -99,7 +99,7 @@ final class Crawler
 					$headers,
 					$links,
 					$httpResponse->getLoadingTime(),
-					$httpCode
+					$httpCode,
 				);
 				$urls[$urlEntity->getUrl()->getAbsoluteUrl()] = $urlEntity;
 			} catch (\Throwable $e) {
@@ -122,7 +122,7 @@ final class Crawler
 			$this->urlReferences,
 			$urls,
 			$this->errors,
-			$robots
+			$robots,
 		);
 	}
 
@@ -147,9 +147,10 @@ final class Crawler
 
 		$this->processBasicConfig($startingUrl);
 		foreach ($urls as $url) {
-			$this->addUrl(Validators::isUrl($url = ltrim($url, '/')) === true // Is absolute URL?
+			$this->addUrl(
+				Validators::isUrl($url = ltrim($url, '/')) === true // Is absolute URL?
 				? $url
-				: $basePath() . '/' . $url
+				: $basePath() . '/' . $url,
 			);
 		}
 
@@ -247,7 +248,10 @@ final class Crawler
 			$html = Strings::normalize((string) substr($response, $headerSize));
 			$size = strlen($html);
 
-			if (strpos($html, '<?xml') !== false && preg_match_all('/<loc>(https?\:\/\/[^\s\<]+)\<\/loc>/', $html, $sitemapUrls)) {
+			if (
+				strpos($html, '<?xml') !== false
+				&& preg_match_all('/<loc>(https?\:\/\/[^\s\<]+)\<\/loc>/', $html, $sitemapUrls)
+			) {
 				foreach ($sitemapUrls[1] ?? [] as $sitemapUrl) {
 					if (Validators::isUrl($sitemapUrl)) {
 						$this->addUrl($sitemapUrl);
@@ -272,7 +276,7 @@ final class Crawler
 			$this->formatHeaders($header),
 			self::timer($url) * 1000,
 			(int) ($httpCodeParser['httpCode'] ?? 500),
-			$size < 0 ? 0 : $size
+			$size < 0 ? 0 : $size,
 		);
 	}
 
@@ -280,13 +284,11 @@ final class Crawler
 	private function formatHtml(string $html): string
 	{
 		$html = Strings::normalize($html);
-		$html = str_replace(
+		return str_replace(
 			['&nbsp;', '&ndash;'],
 			[' ', '-'],
-			(string) preg_replace('/\n+/', "\n", $html)
+			(string) preg_replace('/\n+/', "\n", $html),
 		);
-
-		return $html;
 	}
 
 

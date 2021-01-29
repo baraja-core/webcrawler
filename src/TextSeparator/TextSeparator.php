@@ -47,7 +47,7 @@ final class TextSeparator implements ITextSeparator
 
 		return new TextSeparatorEntity(
 			$regularTexts,
-			$uniqueTexts
+			$uniqueTexts,
 		);
 	}
 }
