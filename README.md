@@ -7,16 +7,20 @@ Simply library for crawling websites by following links with minimal dependencie
 
 [Czech documentation](https://php.baraja.cz/stazeni-celeho-webu-po-odkazech)
 
-Install
--------
+📦 Installation
+---------------
 
-Install simply by Composer:
+It's best to use [Composer](https://getcomposer.org) for installation, and you can also find the package on
+[Packagist](https://packagist.org/packages/baraja-core/webcrawler) and
+[GitHub](https://github.com/baraja-core/webcrawler).
 
-```shell
-composer require baraja-core/webcrawler
+To install, simply use the command:
+
+```
+$ composer require baraja-core/webcrawler
 ```
 
-and use in your project. :)
+You can use the package manually by creating an instance of the internal classes, or register a DIC extension to link the services directly to the Nette Framework.
 
 How to use
 ----------
@@ -82,3 +86,9 @@ Configuration options:
 | `maxCrawlTimeInSeconds` | `30`          | `Int`: Stop crawling when limit is exceeded. |
 | `allowedUrls`           | `['.+']`      | `String[]`: List of valid regex about allowed URL format. |
 | `forbiddenUrls`         | `['']`        | `String[]`: List of valid regex about banned URL format. |
+
+
+📄 License
+-----------
+
+`baraja-core/webcrawler` is licensed under the MIT license. See the [LICENSE](https://github.com/baraja-core/variable-generator/blob/master/LICENSE) file for more details.
