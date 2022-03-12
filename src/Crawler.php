@@ -224,7 +224,7 @@ final class Crawler
 
 	private function loadUrl(string $url): HttpResponse
 	{
-		if ($this->config->getSleepBetweenRequests()) {
+		if ($this->config->getSleepBetweenRequests() > 0) {
 			usleep($this->config->getSleepBetweenRequests() * 1_000);
 		}
 

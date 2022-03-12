@@ -142,10 +142,10 @@ final class RelativeUrlToAbsoluteUrl
 			$parts['pass'] = rawurldecode((string) $parts['pass']);
 		}
 		if ($parts['path'] ?? false) {
-			$parts['path'] = rawurldecode((string) $parts['path']);
+			$parts['path'] = rawurldecode((string) ($parts['path'] ?? ''));
 		}
 		if (isset($h)) {
-			$parts['host'] = rawurldecode((string) $parts['host']);
+			$parts['host'] = rawurldecode((string) ($parts['host'] ?? ''));
 		}
 		if ($parts['query'] ?? false) {
 			$parts['query'] = rawurldecode((string) $parts['query']);
@@ -161,7 +161,7 @@ final class RelativeUrlToAbsoluteUrl
 	private static function urlRemoveDotSegments(string $path): string
 	{
 		$outputSegments = [];
-		foreach ((array) (preg_split('!/!u', $path) ?? []) as $seg) {
+		foreach (((array) preg_split('!/!u', $path)) as $seg) {
 			if ($seg === '' || $seg === '.') {
 				continue;
 			}
