@@ -11,7 +11,6 @@ use Baraja\WebCrawler\Entity\HttpResponse;
 use Baraja\WebCrawler\Entity\Url;
 use Nette\Utils\Strings;
 use Nette\Utils\Validators;
-use Tracy\Debugger;
 
 final class Crawler
 {
@@ -103,10 +102,6 @@ final class Crawler
 				);
 				$urls[$urlEntity->getUrl()->getAbsoluteUrl()] = $urlEntity;
 			} catch (\Throwable $e) {
-				if (class_exists(Debugger::class) === true) {
-					Debugger::log($e);
-				}
-
 				$this->errors[] = [
 					'url' => $crawledUrl,
 					'message' => $e->getMessage(),
