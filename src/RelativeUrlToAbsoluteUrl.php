@@ -15,7 +15,7 @@ final class RelativeUrlToAbsoluteUrl
 			return null;
 		}
 		if (!empty($r['scheme'])) {
-			if (!empty($r['path']) && strpos($r['path'], '/') === 0) {
+			if (!empty($r['path']) && str_starts_with($r['path'], '/')) {
 				$r['path'] = self::urlRemoveDotSegments($r['path']);
 			}
 
@@ -93,7 +93,7 @@ final class RelativeUrlToAbsoluteUrl
 		$xaPath = '(' . $xPathAuthAbs . '|' . $xPathAbs . '|' . $xPathRel . ')';
 		$xQueryFrag = '([' . $xpChar . '/?' . ']*)';
 		$xUrl = '^(' . $xScheme . ':)?' . $xaPath . '?(\?' . $xQueryFrag . ')?(#' . $xQueryFrag . ')?$';
-		if (!preg_match('!' . $xUrl . '!', $url, $m)) {
+		if (preg_match('!' . $xUrl . '!', $url, $m) !== 1) {
 			return null;
 		}
 
@@ -173,7 +173,7 @@ final class RelativeUrlToAbsoluteUrl
 		}
 
 		$outPath = implode('/', $outputSegments);
-		if (strpos($path, '/') === 0) {
+		if (str_starts_with($path, '/')) {
 			$outPath = '/' . $outPath;
 		}
 		if ($outPath !== '/' && (mb_strlen($path) - 1) === mb_strrpos($path, '/', 0, 'UTF-8')) {
@@ -186,29 +186,26 @@ final class RelativeUrlToAbsoluteUrl
 
 	/**
 	 * @param string[] $parts
-	 * @return string
 	 */
-	private static function joinUrl(array $parts, bool $encode = true): string
+	private static function joinUrl(array $parts): string
 	{
-		if ($encode) {
-			if (isset($parts['user'])) {
-				$parts['user'] = rawurlencode($parts['user']);
-			}
-			if (isset($parts['pass'])) {
-				$parts['pass'] = rawurlencode($parts['pass']);
-			}
-			if (isset($parts['host']) && !preg_match('!^(\[[\da-f.:]+\]])|([\da-f.:]+)$!ui', $parts['host'])) {
-				$parts['host'] = rawurlencode($parts['host']);
-			}
-			if (!empty($parts['path'])) {
-				$parts['path'] = preg_replace('!%2F!ui', '/', rawurlencode($parts['path']));
-			}
-			if (isset($parts['query'])) {
-				$parts['query'] = rawurlencode($parts['query']);
-			}
-			if (isset($parts['fragment'])) {
-				$parts['fragment'] = rawurlencode($parts['fragment']);
-			}
+		if (isset($parts['user'])) {
+			$parts['user'] = rawurlencode($parts['user']);
+		}
+		if (isset($parts['pass'])) {
+			$parts['pass'] = rawurlencode($parts['pass']);
+		}
+		if (isset($parts['host']) && preg_match('!^(\[[\da-f.:]+\]])|([\da-f.:]+)$!ui', $parts['host']) !== 1) {
+			$parts['host'] = rawurlencode($parts['host']);
+		}
+		if (!empty($parts['path'])) {
+			$parts['path'] = preg_replace('!%2F!ui', '/', rawurlencode($parts['path']));
+		}
+		if (isset($parts['query'])) {
+			$parts['query'] = rawurlencode($parts['query']);
+		}
+		if (isset($parts['fragment'])) {
+			$parts['fragment'] = rawurlencode($parts['fragment']);
 		}
 
 		$url = '';
@@ -227,7 +224,7 @@ final class RelativeUrlToAbsoluteUrl
 				$url .= '@';
 			}
 
-			if (preg_match('!^[\da-f]*:[\da-f.:]+$!ui', $parts['host'])) {
+			if (preg_match('!^[\da-f]*:[\da-f.:]+$!ui', $parts['host']) === 1) {
 				$url .= '[' . $parts['host'] . ']';
 			} else {
 				$url .= $parts['host'];

@@ -25,7 +25,7 @@ final class TextSeparator implements ITextSeparator
 		$uniqueTexts = [];
 		foreach ($texts[0] ?? [] as $text) {
 			$canAdd = true;
-			if (preg_match('/^\-\-\s*.+(\s*\-\-)?$/', $text = trim($text))) {
+			if (preg_match('/^\-\-\s*.+(\s*\-\-)?$/', $text = trim($text)) === 1) {
 				$canAdd = false;
 			}
 

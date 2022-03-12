@@ -7,7 +7,6 @@ namespace Baraja\WebCrawler\Entity;
 
 final class CrawledResult
 {
-
 	/** @var string[] */
 	private array $allUrls;
 
@@ -17,13 +16,13 @@ final class CrawledResult
 	/** @var string[] */
 	private array $openedUrls;
 
-	/** @var string[][] */
+	/** @var array<string, array<int, string>> */
 	private array $urlReferences;
 
 	/** @var Url[] */
 	private array $urls;
 
-	/** @var mixed[][] */
+	/** @var array<int, array{url: string, message: string, trace: array<int, mixed>}> */
 	private array $errors;
 
 	/** Content of robots.txt file if exist. */
@@ -34,9 +33,9 @@ final class CrawledResult
 	 * @param string[] $allUrls
 	 * @param string[] $followedUrls
 	 * @param string[] $openedUrls
-	 * @param string[][] $urlReferences
+	 * @param array<string, array<int, string>> $urlReferences
 	 * @param Url[] $urls
-	 * @param mixed[][] $errors
+	 * @param array<int, array{url: string, message: string, trace: array<int, mixed>}> $errors
 	 */
 	public function __construct(
 		array $allUrls,
@@ -85,7 +84,7 @@ final class CrawledResult
 
 
 	/**
-	 * @return string[][]
+	 * @return array<string, array<int, string>>
 	 */
 	public function getUrlReferences(): array
 	{
@@ -103,7 +102,7 @@ final class CrawledResult
 
 
 	/**
-	 * @return mixed[][]
+	 * @return array<int, array{url: string, message: string, trace: array<int, mixed>}>
 	 */
 	public function getErrors(): array
 	{

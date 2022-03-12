@@ -7,17 +7,16 @@ namespace Baraja\WebCrawler\Entity;
 
 final class TextSeparatorEntity
 {
-
-	/** @var string[] */
+	/** @var array<int, string> */
 	private array $regularTexts;
 
-	/** @var string[] */
+	/** @var array<int, string> */
 	private array $uniqueTexts;
 
 
 	/**
-	 * @param string[] $regularTexts
-	 * @param string[] $uniqueTexts
+	 * @param array<int, string> $regularTexts
+	 * @param array<int, string> $uniqueTexts
 	 */
 	public function __construct(array $regularTexts, array $uniqueTexts)
 	{
@@ -27,7 +26,7 @@ final class TextSeparatorEntity
 
 
 	/**
-	 * @return string[]
+	 * @return array<int, string>
 	 */
 	public function getRegularTexts(): array
 	{
@@ -36,7 +35,7 @@ final class TextSeparatorEntity
 
 
 	/**
-	 * @return string[]
+	 * @return array<int, string>
 	 */
 	public function getUniqueTexts(): array
 	{

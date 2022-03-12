@@ -20,16 +20,16 @@ final class Crawler
 
 	private \Nette\Http\Url $startingUrl;
 
-	/** @var string[] */
+	/** @var array<int, string> */
 	private array $urlList = [];
 
-	/** @var string[] */
+	/** @var array<int, string> */
 	private array $allUrls = [];
 
-	/** @var string[][] */
+	/** @var array<string, array<int, string>> */
 	private array $urlReferences = [];
 
-	/** @var mixed[][] */
+	/** @var array<int, array{url: string, message: string, trace: array<int, mixed>}> */
 	private array $errors = [];
 
 
@@ -161,9 +161,14 @@ final class Crawler
 
 	private function processBasicConfig(string $url): void
 	{
-		$this->startingUrl = $startingUrl = new \Nette\Http\Url($url);
+		$startingUrl = new \Nette\Http\Url($url);
+		$this->startingUrl = $startingUrl;
 		$this->addUrl($url);
-		$this->addUrl(($startingUrl->getScheme() === 'https' ? 'http' : 'https') . '://' . $startingUrl->getAuthority());
+		$this->addUrl(sprintf(
+			'%s://%s',
+			$startingUrl->getScheme() === 'https' ? 'http' : 'https',
+			$startingUrl->getAuthority(),
+		));
 	}
 
 
@@ -181,7 +186,7 @@ final class Crawler
 		if ($canAdd === true) { // Is allowed?
 			$isAllowed = false;
 			foreach ($this->config->getAllowedUrls() as $allow) {
-				if (preg_match('/^' . $allow . '$/', $url)) {
+				if (preg_match('/^' . $allow . '$/', $url) === 1) {
 					$isAllowed = true;
 					break;
 				}
@@ -193,7 +198,7 @@ final class Crawler
 		if ($canAdd === true) { // Is forbidden?
 			$isForbidden = false;
 			foreach ($this->config->getForbiddenUrls() as $forbidden) {
-				if (preg_match('/^' . $forbidden . '$/', $url)) {
+				if (preg_match('/^' . $forbidden . '$/', $url) === 1) {
 					$isForbidden = true;
 					break;
 				}
@@ -236,16 +241,16 @@ final class Crawler
 		$header = substr($response, 0, $headerSize);
 		$contentType = '';
 
-		if (preg_match('/Content-Type:\s+(\S+)/', $response, $contentTypeParser)) {
+		if (preg_match('/Content-Type:\s+(\S+)/', $response, $contentTypeParser) === 1) {
 			$contentType = $contentTypeParser[1];
 		}
 		if ($contentType === 'application/xml' || strncmp($contentType, 'text/', 5) === 0) {
-			$html = Strings::normalize((string) substr($response, $headerSize));
+			$html = Strings::normalize(substr($response, $headerSize));
 			$size = strlen($html);
 
 			if (
-				strpos($html, '<?xml') !== false
-				&& preg_match_all('/<loc>(https?\:\/\/[^\s\<]+)\<\/loc>/', $html, $sitemapUrls)
+				str_contains($html, '<?xml')
+				&& preg_match_all('/<loc>(https?\:\/\/[^\s\<]+)\<\/loc>/', $html, $sitemapUrls) === 1
 			) {
 				foreach ($sitemapUrls[1] ?? [] as $sitemapUrl) {
 					if (Validators::isUrl($sitemapUrl)) {
@@ -255,7 +260,7 @@ final class Crawler
 			}
 		} else {
 			$html = '<!-- FILE ' . $url . ' -->';
-			if (preg_match('/Content-Length:\s+(\d+)/', $response, $contentLength)) {
+			if (preg_match('/Content-Length:\s+(\d+)/', $response, $contentLength) === 1) {
 				$size = (int) $contentLength[1];
 			} else {
 				$size = strlen($response) - $headerSize;
@@ -271,7 +276,7 @@ final class Crawler
 			$this->formatHeaders($header),
 			self::timer($url) * 1_000,
 			(int) ($httpCodeParser['httpCode'] ?? 500),
-			$size < 0 ? 0 : $size,
+			max($size, 0),
 		);
 	}
 
@@ -294,7 +299,7 @@ final class Crawler
 	{
 		$return = [];
 		foreach (explode("\n", Strings::normalize($header)) as $_header) {
-			if (preg_match('/^(?<name>[^:]+):\s*(?<value>.*)$/', $_header, $headerParser)) {
+			if (preg_match('/^(?<name>[^:]+):\s*(?<value>.*)$/', $_header, $headerParser) === 1) {
 				$return[$headerParser['name']] = $headerParser['value'];
 			}
 		}
@@ -309,10 +314,10 @@ final class Crawler
 	private function getLinksFromHTML(string $url, string $html): array
 	{
 		$return = [];
-		if (preg_match_all('/<a[^>]+>/', $html, $aLinks)) {
+		if (preg_match_all('/<a[^>]+>/', $html, $aLinks) > 0) {
 			foreach ($aLinks[0] as $aLink) {
-				if (preg_match('/href=[\'"](?<url>[^\'"]+)[\'"]/', $aLink, $link)
-					&& !preg_match('/^(?:mailto|tel|phone)\:/', $link['url'])
+				if (preg_match('/href=[\'"](?<url>[^\'"]+)[\'"]/', $aLink, $link) === 1
+					&& preg_match('/^(?:mailto|tel|phone)\:/', $link['url']) !== 1
 				) {
 					$formattedLink = RelativeUrlToAbsoluteUrl::process($url, $link['url']);
 					if ($formattedLink !== null && !in_array($formattedLink, $return, true)) {
@@ -351,9 +356,10 @@ final class Crawler
 		$response = $this->loadUrl($url);
 		if ($response->getHttpCode() === 200) {
 			$this->addUrl($url);
-			foreach (explode("\n", $return = Strings::normalize($response->getHtml())) as $line) {
+			$return = Strings::normalize($response->getHtml());
+			foreach (explode("\n", $return) as $line) {
 				$line = trim($line);
-				if (preg_match('/^[Ss]itemap:\s+(https?\:\/\/\S+)/', $line, $robots)) {
+				if (preg_match('/^[Ss]itemap:\s+(https?\:\/\/\S+)/', $line, $robots) === 1) {
 					$this->addUrl($robots[1]);
 				}
 			}

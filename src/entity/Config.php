@@ -15,22 +15,29 @@ final class Config
 
 	private int $maxCrawlTimeInSeconds;
 
-	/** @var string[] */
+	/** @var array<int, string> */
 	private array $allowedUrls;
 
-	/** @var string[] */
+	/** @var array<int, string> */
 	private array $forbiddenUrls;
 
 
 	/**
-	 * @param mixed[] $config
+	 * @param array{
+	 *    followExternalLinks?: bool,
+	 *    sleepBetweenRequests?: int,
+	 *    maxHttpRequests?: int,
+	 *    maxCrawlTimeInSeconds?: int,
+	 *    allowedUrls?: array<int, string>,
+	 *    forbiddenUrls?: array<int, string>
+	 * } $config
 	 */
 	public function __construct(array $config = [])
 	{
-		$this->followExternalLinks = (bool) ($config['followExternalLinks'] ?? false);
-		$this->sleepBetweenRequests = (int) ($config['sleepBetweenRequests'] ?? 1_000);
-		$this->maxHttpRequests = (int) ($config['maxHttpRequests'] ?? 1_000_000);
-		$this->maxCrawlTimeInSeconds = (int) ($config['maxCrawlTimeInSeconds'] ?? 30);
+		$this->followExternalLinks = $config['followExternalLinks'] ?? false;
+		$this->sleepBetweenRequests = $config['sleepBetweenRequests'] ?? 1_000;
+		$this->maxHttpRequests = $config['maxHttpRequests'] ?? 1_000_000;
+		$this->maxCrawlTimeInSeconds = $config['maxCrawlTimeInSeconds'] ?? 30;
 		$this->allowedUrls = $config['allowedUrls'] ?? ['.+'];
 		$this->forbiddenUrls = $config['forbiddenUrls'] ?? [''];
 	}
@@ -62,7 +69,7 @@ final class Config
 
 
 	/**
-	 * @return string[]
+	 * @return array<int, string>
 	 */
 	public function getAllowedUrls(): array
 	{
@@ -71,7 +78,7 @@ final class Config
 
 
 	/**
-	 * @return string[]
+	 * @return array<int, string>
 	 */
 	public function getForbiddenUrls(): array
 	{
