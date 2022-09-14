@@ -142,7 +142,7 @@ final class RelativeUrlToAbsoluteUrl
 			$parts['pass'] = rawurldecode((string) $parts['pass']);
 		}
 		if ($parts['path'] ?? false) {
-			$parts['path'] = rawurldecode((string) ($parts['path'] ?? ''));
+			$parts['path'] = rawurldecode((string) $parts['path']);
 		}
 		if (isset($h)) {
 			$parts['host'] = rawurldecode((string) ($parts['host'] ?? ''));
