@@ -51,7 +51,6 @@ final class RelativeUrlToAbsoluteUrl
 			if (!empty($b['path'])) {
 				$r['path'] = $b['path'];
 			}
-
 			if (!isset($r['query']) && isset($b['query'])) {
 				$r['query'] = $b['query'];
 			}
@@ -59,7 +58,8 @@ final class RelativeUrlToAbsoluteUrl
 			return self::joinUrl($r);
 		}
 		if ($r['path'][0] !== '/') {
-			if (($base = mb_strrchr($b['path'] ?? '', '/', true, 'UTF-8')) === false) {
+			$base = mb_strrchr($b['path'] ?? '', '/', true, 'UTF-8');
+			if ($base === false) {
 				$base = '';
 			}
 			$r['path'] = $base . '/' . $r['path'];
@@ -135,23 +135,23 @@ final class RelativeUrlToAbsoluteUrl
 		if (!$decode) {
 			return $parts;
 		}
-		if ($parts['user'] ?? false) {
-			$parts['user'] = rawurldecode((string) $parts['user']);
+		if (($parts['user'] ?? '') !== '') {
+			$parts['user'] = rawurldecode($parts['user']);
 		}
-		if ($parts['pass'] ?? false) {
-			$parts['pass'] = rawurldecode((string) $parts['pass']);
+		if (($parts['pass'] ?? '') !== '') {
+			$parts['pass'] = rawurldecode($parts['pass']);
 		}
-		if ($parts['path'] ?? false) {
-			$parts['path'] = rawurldecode((string) $parts['path']);
+		if (($parts['path'] ?? '') !== '') {
+			$parts['path'] = rawurldecode($parts['path']);
 		}
 		if (isset($h)) {
-			$parts['host'] = rawurldecode((string) ($parts['host'] ?? ''));
+			$parts['host'] = rawurldecode($parts['host'] ?? '');
 		}
-		if ($parts['query'] ?? false) {
-			$parts['query'] = rawurldecode((string) $parts['query']);
+		if (($parts['query'] ?? '') !== '') {
+			$parts['query'] = rawurldecode($parts['query']);
 		}
-		if ($parts['fragment'] ?? false) {
-			$parts['fragment'] = rawurldecode((string) $parts['fragment']);
+		if (($parts['fragment'] ?? '') !== '') {
+			$parts['fragment'] = rawurldecode($parts['fragment']);
 		}
 
 		return $parts;

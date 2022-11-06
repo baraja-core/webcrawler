@@ -7,28 +7,6 @@ namespace Baraja\WebCrawler\Entity;
 
 final class CrawledResult
 {
-	/** @var string[] */
-	private array $allUrls;
-
-	/** @var string[] */
-	private array $followedUrls;
-
-	/** @var string[] */
-	private array $openedUrls;
-
-	/** @var array<string, array<int, string>> */
-	private array $urlReferences;
-
-	/** @var Url[] */
-	private array $urls;
-
-	/** @var array<int, array{url: string, message: string, trace: array<int, mixed>}> */
-	private array $errors;
-
-	/** Content of robots.txt file if exist. */
-	private ?string $robots;
-
-
 	/**
 	 * @param string[] $allUrls
 	 * @param string[] $followedUrls
@@ -38,21 +16,14 @@ final class CrawledResult
 	 * @param array<int, array{url: string, message: string, trace: array<int, mixed>}> $errors
 	 */
 	public function __construct(
-		array $allUrls,
-		array $followedUrls,
-		array $openedUrls,
-		array $urlReferences,
-		array $urls,
-		array $errors,
-		?string $robots
+		private array $allUrls,
+		private array $followedUrls,
+		private array $openedUrls,
+		private array $urlReferences,
+		private array $urls,
+		private array $errors,
+		private ?string $robots,
 	) {
-		$this->allUrls = $allUrls;
-		$this->followedUrls = $followedUrls;
-		$this->openedUrls = $openedUrls;
-		$this->urlReferences = $urlReferences;
-		$this->urls = $urls;
-		$this->errors = $errors;
-		$this->robots = $robots;
 	}
 
 

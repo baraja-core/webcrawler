@@ -7,7 +7,7 @@ namespace Baraja\WebCrawler;
 
 use Baraja\WebCrawler\Entity\TextSeparatorEntity;
 
-interface ITextSeparator
+interface TextSeparatorInterface
 {
 	public function getTexts(string $html): TextSeparatorEntity;
 }

@@ -16,7 +16,7 @@ final class Crawler
 {
 	private Config $config;
 
-	private ITextSeparator $textSeparator;
+	private TextSeparatorInterface $textSeparator;
 
 	private \Nette\Http\Url $startingUrl;
 
@@ -54,14 +54,13 @@ final class Crawler
 
 	public function crawl(string $url): CrawledResult
 	{
-		$urls = [];
-
 		$this->processBasicConfig($url);
 		$robots = $this->processRobots(
 			$this->startingUrl->getScheme() . '://' . $this->startingUrl->getAuthority() . '/robots.txt',
 		);
 		$crawlerStartTime = \time();
 
+		$urls = [];
 		for ($iterator = 0; isset($this->urlList[$iterator]); $iterator++) {
 			if ($iterator >= $this->config->getMaxHttpRequests()
 				|| \time() - $crawlerStartTime >= $this->config->getMaxCrawlTimeInSeconds()
@@ -89,16 +88,16 @@ final class Crawler
 				}
 
 				$urlEntity = new Url(
-					$crawledUrl,
-					$httpResponse->getHtml(),
-					$httpResponse->getSize(),
-					$title,
-					$texts->getRegularTexts(),
-					$texts->getUniqueTexts(),
-					$headers,
-					$links,
-					$httpResponse->getLoadingTime(),
-					$httpCode,
+					url: $crawledUrl,
+					html: $httpResponse->getHtml(),
+					size: $httpResponse->getSize(),
+					title: $title,
+					texts: $texts->getRegularTexts(),
+					uniqueTexts: $texts->getUniqueTexts(),
+					headers: $headers,
+					links: $links,
+					loadingTime: $httpResponse->getLoadingTime(),
+					httpCode: $httpCode,
 				);
 				$urls[$urlEntity->getUrl()->getAbsoluteUrl()] = $urlEntity;
 			} catch (\Throwable $e) {
@@ -111,13 +110,13 @@ final class Crawler
 		}
 
 		return new CrawledResult(
-			$this->allUrls,
-			$this->urlList,
-			array_keys($urls),
-			$this->urlReferences,
-			$urls,
-			$this->errors,
-			$robots,
+			allUrls: $this->allUrls,
+			followedUrls: $this->urlList,
+			openedUrls: array_keys($urls),
+			urlReferences: $this->urlReferences,
+			urls: $urls,
+			errors: $this->errors,
+			robots: $robots,
 		);
 	}
 
@@ -126,11 +125,10 @@ final class Crawler
 	 * Load more urls on start.
 	 *
 	 * @param string[] $urls accept array of absolute or relative urls.
-	 * @return CrawledResult
 	 */
 	public function crawlList(string $startingUrl, array $urls = []): CrawledResult
 	{
-		$basePath = function () use ($startingUrl): string {
+		$basePath = static function () use ($startingUrl): string {
 			static $cache;
 			if ($cache === null) {
 				$url = new \Nette\Http\Url($startingUrl);
@@ -142,10 +140,11 @@ final class Crawler
 
 		$this->processBasicConfig($startingUrl);
 		foreach ($urls as $url) {
+			$url = ltrim($url, '/');
 			$this->addUrl(
-				Validators::isUrl($url = ltrim($url, '/')) === true // Is absolute URL?
-				? $url
-				: $basePath() . '/' . $url,
+				Validators::isUrl($url) // Is absolute URL?
+					? $url
+					: $basePath() . '/' . $url,
 			);
 		}
 
@@ -153,7 +152,7 @@ final class Crawler
 	}
 
 
-	public function setTextSeparator(ITextSeparator $textSeparator): void
+	public function setTextSeparator(TextSeparatorInterface $textSeparator): void
 	{
 		$this->textSeparator = $textSeparator;
 	}
@@ -271,29 +270,28 @@ final class Crawler
 		preg_match('/<title[^>]*>(?<title>[^<]+)<\/title>/', $html, $titleParser);
 
 		return new HttpResponse(
-			$this->formatHtml($html),
-			$titleParser['title'] ?? $url,
-			$this->formatHeaders($header),
-			self::timer($url) * 1_000,
-			(int) ($httpCodeParser['httpCode'] ?? 500),
-			max($size, 0),
+			html: $this->formatHtml($html),
+			title: $titleParser['title'] ?? $url,
+			headers: $this->formatHeaders($header),
+			loadingTime: self::timer($url) * 1_000,
+			httpCode: (int) ($httpCodeParser['httpCode'] ?? 500),
+			size: max($size, 0),
 		);
 	}
 
 
 	private function formatHtml(string $html): string
 	{
-		$html = Strings::normalize($html);
 		return str_replace(
 			['&nbsp;', '&ndash;'],
 			[' ', '-'],
-			(string) preg_replace('/\n+/', "\n", $html),
+			(string) preg_replace('/\n+/', "\n", Strings::normalize($html)),
 		);
 	}
 
 
 	/**
-	 * @return string[]
+	 * @return array<string, string>
 	 */
 	private function formatHeaders(string $header): array
 	{
@@ -309,7 +307,7 @@ final class Crawler
 
 
 	/**
-	 * @return string[]
+	 * @return array<int, string>
 	 */
 	private function getLinksFromHTML(string $url, string $html): array
 	{

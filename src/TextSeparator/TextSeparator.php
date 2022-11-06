@@ -8,10 +8,9 @@ namespace Baraja\WebCrawler;
 use Baraja\WebCrawler\Entity\TextSeparatorEntity;
 use Nette\Utils\Strings;
 
-final class TextSeparator implements ITextSeparator
+final class TextSeparator implements TextSeparatorInterface
 {
-
-	/** @var true[] */
+	/** @var array<string, true> */
 	private array $crawledTexts = [];
 
 
@@ -46,8 +45,8 @@ final class TextSeparator implements ITextSeparator
 		}
 
 		return new TextSeparatorEntity(
-			$regularTexts,
-			$uniqueTexts,
+			regularTexts: $regularTexts,
+			uniqueTexts: $uniqueTexts,
 		);
 	}
 }

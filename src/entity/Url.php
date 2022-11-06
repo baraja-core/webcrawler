@@ -9,28 +9,6 @@ final class Url
 {
 	private \Nette\Http\Url $url;
 
-	private string $html;
-
-	private int $size;
-
-	private string $title;
-
-	/** @var string[] */
-	private array $texts;
-
-	/** @var string[] */
-	private array $uniqueTexts;
-
-	/** @var string[] */
-	private array $headers;
-
-	/** @var string[] */
-	private array $links;
-
-	private float $loadingTime;
-
-	private int $httpCode;
-
 
 	/**
 	 * @param string[] $texts
@@ -40,26 +18,17 @@ final class Url
 	 */
 	public function __construct(
 		string $url,
-		string $html,
-		int $size,
-		string $title,
-		array $texts,
-		array $uniqueTexts,
-		array $headers,
-		array $links,
-		float $loadingTime,
-		int $httpCode
+		private string $html,
+		private int $size,
+		private string $title,
+		private array $texts,
+		private array $uniqueTexts,
+		private array $headers,
+		private array $links,
+		private float $loadingTime,
+		private int $httpCode,
 	) {
 		$this->url = new \Nette\Http\Url($url);
-		$this->html = $html;
-		$this->size = $size;
-		$this->title = $title;
-		$this->texts = $texts;
-		$this->uniqueTexts = $uniqueTexts;
-		$this->headers = $headers;
-		$this->links = $links;
-		$this->loadingTime = $loadingTime;
-		$this->httpCode = $httpCode;
 	}
 
 
