@@ -91,7 +91,7 @@ final class RelativeUrlToAbsoluteUrl
 		$xPathRel = '([' . $xpChar . ']+' . $xSlashSeg . '*)';
 		$xPathAbs = '(/(' . $xPathRel . ')?)';
 		$xaPath = '(' . $xPathAuthAbs . '|' . $xPathAbs . '|' . $xPathRel . ')';
-		$xQueryFrag = '([' . $xpChar . '/?' . ']*)';
+		$xQueryFrag = '([' . $xpChar . '/?]*)';
 		$xUrl = '^(' . $xScheme . ':)?' . $xaPath . '?(\?' . $xQueryFrag . ')?(#' . $xQueryFrag . ')?$';
 		if (preg_match('!' . $xUrl . '!', $url, $m) !== 1) {
 			return null;
