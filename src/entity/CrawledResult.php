@@ -97,7 +97,9 @@ final class CrawledResult
 			'followedUrls' => $this->followedUrls,
 			'openedUrls' => $this->openedUrls,
 			'urlReferences' => $this->urlReferences,
-			'urls' => $this->urls,
+			'urls' => array_map(function(Url $url) {
+				return $url->toArray();
+			}, $this->urls),
 			'errors' => $this->errors,
 			'robots' => $this->robots,
 		];
