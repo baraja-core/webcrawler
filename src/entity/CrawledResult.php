@@ -11,9 +11,9 @@ final class CrawledResult
 	 * @param string[] $allUrls
 	 * @param string[] $followedUrls
 	 * @param string[] $openedUrls
-	 * @param array<string, array<int, string>> $urlReferences
+	 * @param array<string,array<int,string>> $urlReferences
 	 * @param Url[] $urls
-	 * @param array<int, array{url: string, message: string, trace: array<int, mixed>}> $errors
+	 * @param array<int,array{url: string, message: string, trace: array<int,mixed>}> $errors
 	 */
 	public function __construct(
 		private array $allUrls,
@@ -55,7 +55,7 @@ final class CrawledResult
 
 
 	/**
-	 * @return array<string, array<int, string>>
+	 * @return array<string,array<int,string>>
 	 */
 	public function getUrlReferences(): array
 	{
@@ -84,5 +84,24 @@ final class CrawledResult
 	public function getRobots(): ?string
 	{
 		return $this->robots;
+	}
+
+	/**
+	 * get all data as array
+	 * 
+	 * @return array<string, mixed>
+	 */
+	public function toArray(): array {
+		return [
+			'allUrls' => $this->allUrls,
+			'followedUrls' => $this->followedUrls,
+			'openedUrls' => $this->openedUrls,
+			'urlReferences' => $this->urlReferences,
+			'urls' => array_map(function(Url $url) {
+				return $url->toArray();
+			}, $this->urls),
+			'errors' => $this->errors,
+			'robots' => $this->robots,
+		];
 	}
 }

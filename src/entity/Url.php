@@ -102,4 +102,24 @@ final class Url
 	{
 		return $this->httpCode;
 	}
+
+	
+	public function getDomain(){
+		return $this->url->getHost();
+	}
+
+	public function toArray(): array{
+		return [
+			'url' => $this->url->getAbsoluteUrl(),
+			'html' => $this->html,
+			'size' => $this->size,
+			'title' => $this->title,
+			'texts' => $this->texts,
+			'uniqueTexts' => $this->uniqueTexts,
+			'headers' => $this->headers,
+			'links' => $this->links,
+			'loadingTime' => $this->loadingTime,
+			'httpCode' => $this->httpCode,
+		];
+	}
 }
