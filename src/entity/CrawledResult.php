@@ -86,18 +86,20 @@ final class CrawledResult
 		return $this->robots;
 	}
 
+
 	/**
 	 * get all data as array
-	 * 
+	 *
 	 * @return array<string, mixed>
 	 */
-	public function toArray(): array {
+	public function toArray(): array
+	{
 		return [
 			'allUrls' => $this->allUrls,
 			'followedUrls' => $this->followedUrls,
 			'openedUrls' => $this->openedUrls,
 			'urlReferences' => $this->urlReferences,
-			'urls' => array_map(function(Url $url) {
+			'urls' => array_map(function(Url $url): array {
 				return $url->toArray();
 			}, $this->urls),
 			'errors' => $this->errors,

@@ -103,12 +103,16 @@ final class Url
 		return $this->httpCode;
 	}
 
-	
-	public function getDomain(){
+
+	public function getDomain(): string
+	{
 		return $this->url->getHost();
 	}
 
-	public function toArray(): array{
+
+	/** @return array<string, mixed> */
+	public function toArray(): array
+	{
 		return [
 			'url' => $this->url->getAbsoluteUrl(),
 			'html' => $this->html,
