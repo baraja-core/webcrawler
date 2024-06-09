@@ -20,7 +20,7 @@
 		"phpstan/phpstan-nette": "^1.0",
 		"phpstan/phpstan-deprecation-rules": "^1.0",
 		"phpstan/phpstan-strict-rules": "^1.0",
-		"spaze/phpstan-disallowed-calls": "^2.0",
+		"spaze/phpstan-disallowed-calls": "^3.1",
 		"roave/security-advisories": "dev-master"
 	},
 	"autoload": {
